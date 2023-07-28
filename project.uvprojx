@@ -1059,6 +1059,16 @@
               <FileType>1</FileType>
               <FilePath>.\apply\vision.c</FilePath>
             </File>
+            <File>
+              <FileName>raspi_undercontrol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\apply\raspi_undercontrol.c</FilePath>
+            </File>
+            <File>
+              <FileName>raspi_undercontrol.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\apply\raspi_undercontrol.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
