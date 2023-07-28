@@ -23,7 +23,7 @@ int main()
 	PWM1_Init();  // PWM1初始化M1P0、M1P1、M1P2、M1P3
 
 	rangefinder_init();			//测距传感器串口
-	UART3_Init(115200);  		// 树莓派通信串口
+	// UART3_Init(115200);  		// 树莓派通信串口
 	UART7_Init(256000);			//OPENMV视觉串口初始化
 	
 
@@ -39,9 +39,12 @@ int main()
 	
 	page_number = 6;
 	sdk_work_mode = Deliver_Medicine;
+	SDK_DT_Send_Check(Tracking_task);
 	while(1)
 	{
 		screen_display();//屏幕显示
+		
+		
 	}
 }
 
@@ -90,7 +93,7 @@ void duty_1000hz(void)
 //	{
 //		gpio_input_check_channel_12();//检测12路灰度灰度管状态
 //	}
-	// gpio_input_check_from_vision();//openmv机器视觉信息获取
+	gpio_input_check_from_vision();//openmv机器视觉信息获取
 	simulation_pwm_output();//模拟pwm输出
 }
 

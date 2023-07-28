@@ -176,7 +176,7 @@ typedef enum
 	tracking_control_until_recognition_cross_or_stop = 1,  // 状态：循迹控制，直到识别到十字或停止位
 	speed0_control_until_receive_todo = 2,    // 状态：零速度控制，直到收到前左右转指令
 
-	speed0_control = 3,   		// 0速度控制
+	speed0_control = 50,   		// 0速度控制
 
 	clockwise_rotate_90_task_state = 100,  // 左转状态机
 	contrarotate_90_task_state = 120,		// 右转状态机
@@ -192,16 +192,12 @@ void deliver_medicine_task(void)
 // ------------------------------状态：起初数字识别任务-------------------------------
 	if(flight_subtask_cnt[n] == inbegin_number_recognition_task_state)// 状态：起初数字识别任务，直到收到完成标志位才转移
 	{
-		SDK_DT_Send_Check(Number_recognition_inbegin_task, (COM_SDK)7);  // 发送起初数字识别任务给openmv
+		SDK_DT_Send_Check(Number_recognition_inbegin_task);  // 发送起初数字识别任务给openmv
 		if(camera1.inbegin_recognition_finsh_flag)
 		{
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
-			SDK_DT_Send_Check(Tracking_task, (COM_SDK)7);  // 发送循迹任务给openmv
-
-			beep.period = 200;
-			beep.light_on_percent = 0.5f;
-			beep.reset = 1;
-			beep.times = 2;
+			SDK_DT_Send_Check(Tracking_task);  // 发送循迹任务给openmv
+			camera1.inbegin_recognition_finsh_flag = 0;
 		}
 	}
 
@@ -211,24 +207,22 @@ void deliver_medicine_task(void)
 		speed_ctrl_mode=1;  //速度控制方式为两轮单独控制
 		vision_turn_control_50hz(&turn_ctrl_pwm);
 		speed_setup = __deliver_medicine_task_param.speed;
-		speed_expect[0]=speed_setup+turn_ctrl_pwm*turn_scale;//左边轮子速度期望
-		speed_expect[1]=speed_setup-turn_ctrl_pwm*turn_scale;//右边轮子速度期望
+		speed_expect[0] = speed_setup+turn_ctrl_pwm*turn_scale;//左边轮子速度期望
+		speed_expect[1] = speed_setup-turn_ctrl_pwm*turn_scale;//右边轮子速度期望
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);
+
 		if(camera1.cross == 1)   // 如果检测到十字
 		{
-			SDK_DT_Send_Check(Number_recognition_intrack_task,(COM_SDK)7);		// 发送赛道数字识别任务给openmv
+			SDK_DT_Send_Check(Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
 
-			beep.period = 200;
-			beep.light_on_percent = 0.5f;
-			beep.reset = 1;
-			beep.times = 1;
-
+			camera1.cross = 0;  // 复位
 			flight_subtask_cnt[n] = speed0_control_until_receive_todo;
+			// flight_subtask_cnt[n] = speed0_control;
 		}
-		else		// 如果检测到停止位
+		else 		// 如果检测到停止位
 		{
-			flight_subtask_cnt[n] = speed0_control;
+			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
 		}
 	}
 // -----------------------状态：零速度控制，直到收到前左右转指令-------------------
@@ -242,14 +236,15 @@ void deliver_medicine_task(void)
 
 		if(camera1.intrack_todo_task == 4)   // 100 左转 
 		{	
-			beep.period = 200;
-			beep.light_on_percent = 0.5f;
-			beep.reset = 1;
-			beep.times = 3;
+			// beep.period = 200;
+			// beep.light_on_percent = 0.5f;
+			// beep.reset = 1;
+			// beep.times = 3;
 
-			flight_subtask_cnt[n] = contrarotate_90_task_state;  // 下一状态：左转90度
+			// flight_subtask_cnt[n] = contrarotate_90_task_state;  // 下一状态：左转90度
+			flight_subtask_cnt[n] = speed0_control;
 		}
-		else if(camera1.intrack_todo_task == 0)  // 000 直走  
+		else if(camera1.intrack_todo_task == 2)  // 010 直走  
 		{
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop; // 下一状态；循迹控制直到识别十字
 			
@@ -411,12 +406,20 @@ void deliver_medicine_task(void)
 // ------------------------------------0速度控制状态机----------------------------------
 	else if(flight_subtask_cnt[n] == speed0_control)
 	{
+		beep.period = 200;
+		beep.light_on_percent = 0.5f;
+		beep.reset = 1;
+		beep.times = 5;
+		flight_subtask_cnt[n]++;
+
+	}
+	else if(flight_subtask_cnt[n] == speed0_control+1)
+	{
 		// 零速度控制
 		speed_ctrl_mode=1; 
 		speed_expect[0] = 0;	//左边轮子速度期望
 		speed_expect[1] = 0;	//右边轮子速度期望
 		speed_control_100hz(speed_ctrl_mode);
-
 	}
 
 

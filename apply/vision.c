@@ -6,16 +6,10 @@
 
 unsigned char sdk_data_to_send[10]; 
 
-/***************************************
-函数名:	void SDK_DT_Send_Check(unsigned char mode,COM_SDK com)
-说明: 飞控向openmv发送工作模式数据帧
-入口:	unsigned char mode-模式
-			COM_SDK com-串口号
-出口:	无
-备注:	无
-作者:	无名创新
-***************************************/
-void SDK_DT_Send_Check(uint8_t mode,COM_SDK com)
+/**
+ * @brief 向openmv发送任务指定命令
+*/
+void SDK_DT_Send_Check(uint8_t mode)
 {
 	sdk_data_to_send[0]=0xFF;
 	sdk_data_to_send[1]=0xFE;
@@ -27,8 +21,8 @@ void SDK_DT_Send_Check(uint8_t mode,COM_SDK com)
 	uint8_t sum = 0;
 	for(uint8_t i=0;i<6;i++) sum += sdk_data_to_send[i];
 	sdk_data_to_send[6]=sum;
-	if(com==UART7_SDK) UART_SendBytes(7,sdk_data_to_send, 7);
-	if(com==UART1_SDK) UART_SendBytes(1,sdk_data_to_send, 7); 
+	UART_SendBytes(7,sdk_data_to_send, 7);
+	
 }
 
 
@@ -160,134 +154,130 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 {
   uint8_t sum = 0;
   for(uint8_t i=0;i<(num-1);i++)  sum+=*(data_buf+i);
-  if(!(sum==*(data_buf+num-1))) 	return;//不满足和校验条件
-  if(!(*(data_buf)==0xFF && *(data_buf+1)==0xFC))return;//不满足帧头条件
+  if(!(sum==*(data_buf+num-1))) 	return; //不满足和校验条件
+  if(!(*(data_buf)==0xFF && *(data_buf+1)==0xFC))return; //不满足帧头条件
 
 	target->task=*(data_buf+2);  // 获取任务类别
 
-
-
-	if(target->camera_id==0x01)//摄像头id为OPENMV
+	switch(target->task)
 	{
-		switch(target->task)
+
+		case Tracking_task:  // 视觉任务
 		{
+			
+			target->x = *(data_buf+4)<<8 | *(data_buf+5);
+			target->cross = *(data_buf+6);
+			target->flag = *(data_buf+7);
+			target->fps = *(data_buf+8);
 
-			case Tracking_task:  // 视觉任务
+
+			target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
+			if(target->flag!=0)  
 			{
-				
-				target->x = *(data_buf+4)<<8 | *(data_buf+5);
-				target->cross = *(data_buf+6);
-				target->flag = *(data_buf+7);
-				target->fps = *(data_buf+8);
-
-
-				target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
-				if(target->flag!=0)  
+				if(target->trust_cnt<20)	 
 				{
-					if(target->trust_cnt<20)	 
-					{
-						target->trust_cnt++;
-						target->trust_flag=0;
-					}
-					else target->trust_flag=1;
-				}
-				else 
-				{
-					target->trust_cnt/=2;
-					target->trust_flag=0;
-				}	
-
-				
-				switch(target->x)
-				{
-					case 0x0001:gray_status[1]=-15; vision_status_worse/=2;break;											//0000-0000-0000-0001b
-					case 0x0003:gray_status[1]=-14; vision_status_worse/=2;break;											//0000-0000-0000-0011b
-					case 0x0002:gray_status[1]=-13;	vision_status_worse/=2;break;											//0000-0000-0000-0010b
-					case 0x0006:gray_status[1]=-12;	vision_status_worse/=2;break;											//0000-0000-0000-0110b
-					case 0x0004:gray_status[1]=-11;	vision_status_worse/=2;break;											//0000-0000-0000-0100b
-					case 0x000C:gray_status[1]=-10;	vision_status_worse/=2;break;											//0000-0000-0000-1100b
-					case 0x0008:gray_status[1]=-9;	vision_status_worse/=2;break;											//0000-0000-0000-1000b
-					case 0x0018:gray_status[1]=-8;	vision_status_worse/=2;break;											//0000-0000-0001-1000b
-					case 0x0010:gray_status[1]=-7;	vision_status_worse/=2;break;											//0000-0000-0001-0000b
-					case 0x0030:gray_status[1]=-6;	vision_status_worse/=2;break;											//0000-0000-0011-0000b
-					case 0x0020:gray_status[1]=-5;	vision_status_worse/=2;break;											//0000-0000-0010-0000b
-					case 0x0060:gray_status[1]=-4;	vision_status_worse/=2;break;											//0000-0000-0110-0000b
-					case 0x0040:gray_status[1]=-3;	vision_status_worse/=2;break;											//0000-0000-0100-0000b
-					case 0x00C0:gray_status[1]=-2;  vision_status_worse/=2;break;											//0000-0000-1100-0000b
-					case 0x0080:gray_status[1]=-1;  vision_status_worse/=2;break;											//0000-0000-1000-0000b
-					case 0x0180:gray_status[1]=0;	vision_status_worse/=2;break;											//0000-0001-1000-0000b
-					case 0x0100:gray_status[1]=1;	vision_status_worse/=2;break;											//0000-0001-0000-0000b
-					case 0x0300:gray_status[1]=2;	vision_status_worse/=2;break;											//0000-0011-0000-0000b
-					case 0x0200:gray_status[1]=3;	vision_status_worse/=2;break;											//0000-0010-0000-0000b
-					case 0x0600:gray_status[1]=4;	vision_status_worse/=2;break;											//0000-0110-0000-0000b
-					case 0x0400:gray_status[1]=5;	vision_status_worse/=2;break;											//0000-0100-0000-0000b
-					case 0x0C00:gray_status[1]=6;	vision_status_worse/=2;break;											//0000-1100-0000-0000b
-					case 0x0800:gray_status[1]=7;	vision_status_worse/=2;break;											//0000-1000-0000-0000b
-					case 0x1800:gray_status[1]=8;	vision_status_worse/=2;break;											//0001-1000-0000-0000b
-					case 0x1000:gray_status[1]=9;	vision_status_worse/=2;break;											//0001-0000-0000-0000b
-					case 0x3000:gray_status[1]=10;	vision_status_worse/=2;break;											//0011-0000-0000-0000b
-					case 0x2000:gray_status[1]=11;	vision_status_worse/=2;break;											//0010-0000-0000-0000b
-					case 0x6000:gray_status[1]=12;	vision_status_worse/=2;break;											//0110-0000-0000-0000b
-					case 0x4000:gray_status[1]=13;	vision_status_worse/=2;break;											//0100-0000-0000-0000b
-					case 0xC000:gray_status[1]=14;	vision_status_worse/=2;break;											//1100-0000-0000-0000b
-					case 0x8000:gray_status[1]=15;	vision_status_worse/=2;break;											//1000-0000-0000-0000b
-					case 0x0000:gray_status[1]=gray_status_backup[1][0];vision_status_worse++;break;  //0000-0000-0000-0000b
-					default:
-					{
-						gray_status[1]=gray_status_backup[1][0];
-						vision_status_worse++;
-					}							
-				}
-			}
-			case Number_recognition_inbegin_task:
-			{
-				target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
-				if(target->flag!=0)  
-				{
-					if(target->trust_cnt<20)	 
-					{
-						target->trust_cnt++;
-						target->trust_flag=0;
-					}
-					else target->trust_flag=1;
-				}
-				else 
-				{
-					target->trust_cnt/=2;
+					target->trust_cnt++;
 					target->trust_flag=0;
 				}
-				target->inbegin_recognition_finsh_flag = *(data_buf+4);
-				
+				else target->trust_flag=1;
 			}
-			break;
-			case Number_recognition_intrack_task:
+			else 
 			{
-				if(target->flag!=0)  
-				{
-					if(target->trust_cnt<20)	 
-					{
-						target->trust_cnt++;
-						target->trust_flag=0;
-					}
-					else target->trust_flag=1;
-				}
-				else 
-				{
-					target->trust_cnt/=2;
-					target->trust_flag=0;
-				}
-
-				target->intrack_todo_task = *(data_buf+4);
-			}
-			break;
-			default:  // 无模式
-			{
-				target->target_ctrl_enable=0;
+				target->trust_cnt/=2;
 				target->trust_flag=0;
-				target->x=0;
+			}	
+
+			
+			switch(target->x)
+			{
+				case 0x0001:gray_status[1]=-15; vision_status_worse/=2;break;											//0000-0000-0000-0001b
+				case 0x0003:gray_status[1]=-14; vision_status_worse/=2;break;											//0000-0000-0000-0011b
+				case 0x0002:gray_status[1]=-13;	vision_status_worse/=2;break;											//0000-0000-0000-0010b
+				case 0x0006:gray_status[1]=-12;	vision_status_worse/=2;break;											//0000-0000-0000-0110b
+				case 0x0004:gray_status[1]=-11;	vision_status_worse/=2;break;											//0000-0000-0000-0100b
+				case 0x000C:gray_status[1]=-10;	vision_status_worse/=2;break;											//0000-0000-0000-1100b
+				case 0x0008:gray_status[1]=-9;	vision_status_worse/=2;break;											//0000-0000-0000-1000b
+				case 0x0018:gray_status[1]=-8;	vision_status_worse/=2;break;											//0000-0000-0001-1000b
+				case 0x0010:gray_status[1]=-7;	vision_status_worse/=2;break;											//0000-0000-0001-0000b
+				case 0x0030:gray_status[1]=-6;	vision_status_worse/=2;break;											//0000-0000-0011-0000b
+				case 0x0020:gray_status[1]=-5;	vision_status_worse/=2;break;											//0000-0000-0010-0000b
+				case 0x0060:gray_status[1]=-4;	vision_status_worse/=2;break;											//0000-0000-0110-0000b
+				case 0x0040:gray_status[1]=-3;	vision_status_worse/=2;break;											//0000-0000-0100-0000b
+				case 0x00C0:gray_status[1]=-2;  vision_status_worse/=2;break;											//0000-0000-1100-0000b
+				case 0x0080:gray_status[1]=-1;  vision_status_worse/=2;break;											//0000-0000-1000-0000b
+				case 0x0180:gray_status[1]=0;	vision_status_worse/=2;break;											//0000-0001-1000-0000b
+				case 0x0100:gray_status[1]=1;	vision_status_worse/=2;break;											//0000-0001-0000-0000b
+				case 0x0300:gray_status[1]=2;	vision_status_worse/=2;break;											//0000-0011-0000-0000b
+				case 0x0200:gray_status[1]=3;	vision_status_worse/=2;break;											//0000-0010-0000-0000b
+				case 0x0600:gray_status[1]=4;	vision_status_worse/=2;break;											//0000-0110-0000-0000b
+				case 0x0400:gray_status[1]=5;	vision_status_worse/=2;break;											//0000-0100-0000-0000b
+				case 0x0C00:gray_status[1]=6;	vision_status_worse/=2;break;											//0000-1100-0000-0000b
+				case 0x0800:gray_status[1]=7;	vision_status_worse/=2;break;											//0000-1000-0000-0000b
+				case 0x1800:gray_status[1]=8;	vision_status_worse/=2;break;											//0001-1000-0000-0000b
+				case 0x1000:gray_status[1]=9;	vision_status_worse/=2;break;											//0001-0000-0000-0000b
+				case 0x3000:gray_status[1]=10;	vision_status_worse/=2;break;											//0011-0000-0000-0000b
+				case 0x2000:gray_status[1]=11;	vision_status_worse/=2;break;											//0010-0000-0000-0000b
+				case 0x6000:gray_status[1]=12;	vision_status_worse/=2;break;											//0110-0000-0000-0000b
+				case 0x4000:gray_status[1]=13;	vision_status_worse/=2;break;											//0100-0000-0000-0000b
+				case 0xC000:gray_status[1]=14;	vision_status_worse/=2;break;											//1100-0000-0000-0000b
+				case 0x8000:gray_status[1]=15;	vision_status_worse/=2;break;											//1000-0000-0000-0000b
+				case 0x0000:gray_status[1]=gray_status_backup[1][0];vision_status_worse++;break;  //0000-0000-0000-0000b
+				default:
+				{
+					gray_status[1]=gray_status_backup[1][0];
+					vision_status_worse++;
+				}							
 			}
 		}
+		case Number_recognition_inbegin_task:
+		{
+			target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
+			if(target->flag!=0)  
+			{
+				if(target->trust_cnt<20)	 
+				{
+					target->trust_cnt++;
+					target->trust_flag=0;
+				}
+				else target->trust_flag=1;
+			}
+			else 
+			{
+				target->trust_cnt/=2;
+				target->trust_flag=0;
+			}
+			target->inbegin_recognition_finsh_flag = *(data_buf+4);
+			
+		}
+		break;
+		case Number_recognition_intrack_task:
+		{
+			if(target->flag!=0)  
+			{
+				if(target->trust_cnt<20)	 
+				{
+					target->trust_cnt++;
+					target->trust_flag=0;
+				}
+				else target->trust_flag=1;
+			}
+			else 
+			{
+				target->trust_cnt/=2;
+				target->trust_flag=0;
+			}
+
+			target->intrack_todo_task = *(data_buf+4);
+		}
+		break;
+		default:  // 无模式
+		{
+			target->target_ctrl_enable=0;
+			target->trust_flag=0;
+			target->x=0;
+		}
 	}
+
 }
 
 

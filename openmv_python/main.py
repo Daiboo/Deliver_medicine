@@ -105,10 +105,11 @@ def Receive_Anl(data_buf,num):
         sum = sum + data_buf[i]
         i = i + 1
     sum = sum%256 #求余
+    print(sum)
     if sum != data_buf[num-1]:
         return
     #和校验通过
-    if data_buf[2]==0xA0:   # 第三位  0xc0+mode
+    if data_buf[2]==0xA0:
         #设置模块工作模式
         task_ctrl.task = data_buf[4]  # 获取任务类型
         print(task_ctrl.task)
@@ -116,21 +117,21 @@ def Receive_Anl(data_buf,num):
 
 
 def uart_data_prase(buf):  # 读取数据状态机
-    if R.state==0 and buf==0xFF:#帧头1
+    if R.state==0 and buf==0xFF:#帧头1 0xFF
         R.state=1
         R.uart_buf.append(buf)
-    elif R.state==1 and buf==0xFE:#帧头2
+    elif R.state==1 and buf==0xFE:#帧头2  # 0xFE
         R.state=2
         R.uart_buf.append(buf)
-    elif R.state==2 and buf<0xFF:#功能字
+    elif R.state==2 and buf<0xFF:#功能字  0xA0
         R.state=3
         R.uart_buf.append(buf)
-    elif R.state==3 and buf<50:#数据长度小于50
+    elif R.state==3 and buf<50:#数据长度小于50  2
         R.state=4
         R._data_len=buf  #有效数据长度
         R._data_cnt=buf+5#总数据长度
         R.uart_buf.append(buf)
-    elif R.state==4 and R._data_len>0:#存储对应长度数据
+    elif R.state==4 and R._data_len>0:#存储对应长度数据  task 0
         R._data_len=R._data_len-1
         R.uart_buf.append(buf)
         if R._data_len==0:
@@ -150,6 +151,7 @@ def uart_data_read():  # 串口数据读取并解析
     buf_len=uart.any()
     for i in range(0,buf_len):
         uart_data_prase(uart.readchar())
+
 
 # --------------------------------------串口数据发送----------------------------------------------
 
@@ -359,6 +361,7 @@ while True:
         findtrack()
     elif task_ctrl.task == task_type.Number_recognition_intrack_task:
         intrack_number_recognition()
-    
+
     uart.write(package_blobs_data(task_ctrl.task))
+    target_data_graysensor.fps = int(clock.fps())
     print(f'fps = {clock.fps()}')
