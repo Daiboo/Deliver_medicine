@@ -25,33 +25,30 @@ void sdk_duty_run(void)
 	
 	switch(sdk_work_mode)
 	{
-		case -10://初始调试模式，用于确定电机运动方向时使用
+		case Speed_Control:   // 速度控制--速度期望来源于树莓派指定
 		{
-			speed_ctrl_mode=0;  //直接开环输出指定PWM数值，用于调试电机方向
-			motion_ctrl_pwm=motion_test_pwm_default;//默认输出百分之50占空的pwm
+			speed_control_task(0);
 		}
 		break;
 
-
-//		case -2://调速测试模式——速度期望来源于遥控
-//		{
-//			speed_ctrl_mode=1;//速度控制方式为两轮单独控制
-//			speed_setup=RC_Data.rc_rpyt[RC_PITCH];//速度期望来源于俯仰杆给定
-//			speed_expect[0]=speed_setup;//左边轮子速度期望
-//			speed_expect[1]=speed_setup;//右边轮子速度期望
-//			//速度控制
-//			speed_control_100hz(speed_ctrl_mode);				
-//		}
-//		break;
-		case -1://调速测试模式——速度期望来源于按键设定
+		case Distance_Control:  // 距离控制--距离参数来源于树莓派指定
 		{
-			speed_ctrl_mode=1;//速度控制方式为两轮单独控制
-			speed_expect[0]=speed_setup;//左边轮子速度期望
-			speed_expect[1]=speed_setup;//右边轮子速度期望
-			//速度控制
-			speed_control_100hz(speed_ctrl_mode);				
+			distance_control_task(0);
 		}
 		break;
+
+		case Clockwise_Rotation_90:	// 顺时针旋转90度
+		{
+			clockwise_rotate_90_task();
+		}
+		break;
+
+		case Contrarotate_90:
+		{
+			contrarotate_90_task();
+		}
+		break;
+
 //		case 0://遥控控制模式
 //		{
 //			speed_ctrl_mode=1;//速度控制方式为两轮单独控制
@@ -77,33 +74,9 @@ void sdk_duty_run(void)
 //			speed_control_100hz(speed_ctrl_mode);		
 //		}
 //		break;		
-		case 2://原地，两轮差速小车，顺时针转动90°
-		{
-			speed_ctrl_mode=1;//速度控制方式为两轮单独控制			
-			clockwise_rotation_90();
-			steer_control(&turn_ctrl_pwm);
-			speed_setup = 0;
-			//期望速度
-			speed_expect[0]=speed_setup+turn_ctrl_pwm*steer_gyro_scale;//左边轮子速度期望
-			speed_expect[1]=speed_setup-turn_ctrl_pwm*steer_gyro_scale;//右边轮子速度期望
-			//速度控制
-			speed_control_100hz(speed_ctrl_mode);		
-		}
-		break;
 
-		case 3://逆时针转动90°
-		{
-			speed_ctrl_mode=1;//速度控制方式为两轮单独控制			
-			contrarotate_90();
-			steer_control(&turn_ctrl_pwm);
-			speed_setup = 0;	
-			//期望速度
-			speed_expect[0]=speed_setup+turn_ctrl_pwm*steer_gyro_scale;//左边轮子速度期望
-			speed_expect[1]=speed_setup-turn_ctrl_pwm*steer_gyro_scale;//右边轮子速度期望
-			//速度控制
-			speed_control_100hz(speed_ctrl_mode);		
-		}
-		break;
+
+
 //		case 4://以30deg/s的角速度顺时针转动3000ms
 //		{
 //			speed_ctrl_mode=1;//速度控制方式为两轮单独控制			

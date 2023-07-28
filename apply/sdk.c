@@ -290,7 +290,7 @@ void steer_control(float *output)
 				if(yaw_tmp<0) 	yaw_tmp+=360;
 				if(yaw_tmp>360) yaw_tmp-=360;
 				steer_angle_expect=yaw_tmp;
-				_flight_output->yaw_ctrl_start=0;
+				_flight_output->yaw_ctrl_start=0;  // 这里又改变了yaw_ctrl_start
 				_flight_output->yaw_ctrl_cnt=0;
 				_flight_output->yaw_ctrl_end=0;
 			}

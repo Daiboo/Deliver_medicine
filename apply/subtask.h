@@ -2,6 +2,16 @@
 #define __SUBTASK_H
 
 
+#define SUBTASK_NUM 20
+
+// ----------------------任务类别------------------------
+typedef enum
+{
+	Clockwise_Rotation_90 = 0,
+	Contrarotate_90,
+    Speed_Control,
+    Distance_Control,
+}Task_Type;
 
 
 
@@ -9,16 +19,19 @@ void subtask_reset(void);
 
 
 
-void clockwise_rotation_90_task(uint8_t speed); //顺时针转90°任务
-void contrarotate_90_task(uint8_t speed);//逆时针转90°任务
-void speed_control_task(int8_t speed);		// 速度控制任务
-void distance_control_task(float distance);  // 距离控制任务
+void speed_control_task(int8_t speed);
+void distance_control_task(float distance);
+void clockwise_rotate_90_task(void);		//顺时针转90度
+void contrarotate_90_task(void);		//逆时针转90°
+
+
+
 
 void deliver_medicine_task(void);   // 送药小车
 
 
 
-
+extern uint32_t subtask_finish_flag[SUBTASK_NUM];
 
 
 
