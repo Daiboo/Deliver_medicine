@@ -148,27 +148,28 @@ void UART2_Init(unsigned long bound)//串口6初始化
 
 /***************************************
 函数名:	void UART3_Init(unsigned long bound)
-说明: 串口3资源初始化--无名创新地面站通讯串口(UART3):
+说明: 串口3资源初始化--无名创新地面站通讯串口(UART3)/树莓派端通信串口:
 入口:	unsigned long bound-波特率
 出口:	无
 备注:	无
 作者:	无名创新
 ***************************************/
-//void UART3_Init(unsigned long bound)//串口3初始化
-//{
-//  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);//使能GPIO外设		
-//  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART3);//使能UART外设
-//  GPIOPinConfigure(GPIO_PC6_U3RX);//GPIO模式配置 PC6--RX PC7--TX 
-//  GPIOPinConfigure(GPIO_PC7_U3TX);
-//  GPIOPinTypeUART(GPIO_PORTC_BASE, GPIO_PIN_6 | GPIO_PIN_7);//GPIO的UART模式配置
-//  UARTConfigSetExpClk(UART3_BASE, SysCtlClockGet(), bound,
-//                      (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
-//                       UART_CONFIG_PAR_NONE));
-//  UARTFIFODisable(UART3_BASE);//使能UART0中断	
-//  UARTIntEnable(UART3_BASE,UART_INT_RX);//使能UART3接收中断		
-//  UARTIntRegister(UART3_BASE,UART3_IRQHandler);//UART3中断地址注册	
-//  IntPrioritySet(INT_UART3, USER_INT3);
-//}
+void UART3_Init(unsigned long bound)//串口3初始化
+{
+ SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);//使能GPIO外设		
+ SysCtlPeripheralEnable(SYSCTL_PERIPH_UART3);//使能UART外设
+ GPIOPinConfigure(GPIO_PC6_U3RX);//GPIO模式配置 PC6--RX PC7--TX 
+ GPIOPinConfigure(GPIO_PC7_U3TX);
+ GPIOPinTypeUART(GPIO_PORTC_BASE, GPIO_PIN_6 | GPIO_PIN_7);//GPIO的UART模式配置
+ UARTConfigSetExpClk(UART3_BASE, SysCtlClockGet(), bound,
+                     (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+                      UART_CONFIG_PAR_NONE));
+ UARTFIFODisable(UART3_BASE);//使能UART0中断	
+ UARTIntEnable(UART3_BASE,UART_INT_RX);//使能UART3接收中断		
+ UARTIntRegister(UART3_BASE,UART3_IRQHandler);//UART3中断地址注册	
+ IntPrioritySet(INT_UART3, USER_INT3);
+}
+
 
 /***************************************
 函数名:	void UART4_Init(unsigned long bound)
@@ -203,7 +204,7 @@ void UART2_Init(unsigned long bound)//串口6初始化
 备注:	无
 作者:	无名创新
 ***************************************/
-void UART5_Init(unsigned long bound)//串口4初始化
+void UART5_Init(unsigned long bound)//串口5初始化
 {
  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);//使能GPIO外设		
  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART5);//使能UART外设

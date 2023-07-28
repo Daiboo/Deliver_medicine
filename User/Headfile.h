@@ -103,4 +103,5 @@
 #include "FusionOffset.h"
 #include "subtask.h"
 #include "ui.h"
+#include "raspi_undercontrol.h"
 #endif

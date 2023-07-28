@@ -70,16 +70,16 @@ void UART2_IRQHandler(void)
 备注:	无
 作者:	无名创新
 ***************************************/
-//void UART3_IRQHandler(void)
-//{		
-//  uint32_t flag = UARTIntStatus(UART3_BASE,1);//获取中断标志 原始中断状态 屏蔽中断标志		
-//  UARTIntClear(UART3_BASE,flag);//清除中断标志			
-//  while(UARTCharsAvail(UART3_BASE))//判断FIFO是否还有数据		
-//  {	
-//		uint8_t ch=UARTCharGet(UART3_BASE);
-//		NCLink_Data_Prase_Prepare_Lite(ch);
-//	}	
-//}
+void UART3_IRQHandler(void)
+{		
+ uint32_t flag = UARTIntStatus(UART3_BASE,1);//获取中断标志 原始中断状态 屏蔽中断标志		
+ UARTIntClear(UART3_BASE,flag);//清除中断标志			
+ while(UARTCharsAvail(UART3_BASE))//判断FIFO是否还有数据		
+ {	
+		uint8_t ch=UARTCharGet(UART3_BASE);
+		Raspi_Data_Phrase_Prepare_Lite(ch);   // 树莓派发送指令解析函数
+	}	
+}
 
 /***************************************
 函数名:	void UART4_IRQHandler(void)

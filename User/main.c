@@ -23,6 +23,7 @@ int main()
 	PWM1_Init();  // PWM1初始化M1P0、M1P1、M1P2、M1P3
 
 	rangefinder_init();			//测距传感器串口
+	UART3_Init(115200);  		// 树莓派通信串口
 	UART7_Init(256000);			//OPENMV视觉串口初始化
 	
 
@@ -37,7 +38,7 @@ int main()
 	NTimer_Init();
 	
 	page_number = 0;
-	sdk_work_mode = 2;
+	sdk_work_mode = 3;
 	while(1)
 	{
 		screen_display();//屏幕显示
