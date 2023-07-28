@@ -447,7 +447,7 @@ void deliver_medicine_task(void)
 		speed_expect[0] = 0;	//左边轮子速度期望
 		speed_expect[1] = 0;	//右边轮子速度期望
 		speed_control_100hz(speed_ctrl_mode);
-		flight_subtask_cnt[n] == if_medicine + 1;
+
 
 	}
 // ------------------------------------   取药     ---------------------------------------
