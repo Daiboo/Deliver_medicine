@@ -230,10 +230,10 @@ void deliver_medicine_task(void)
 		speed_control_100hz(speed_ctrl_mode);
 
 		if(camera1.cross == 1)   // 如果检测到十字
-		{
+		{	
+
 			SDK_DT_Send_Check(Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
 
-			camera1.cross = 0;  // 复位
 			flight_subtask_cnt[n] = speed0_control_until_receive_todo;
 			// flight_subtask_cnt[n] = speed0_control;
 		}
@@ -251,15 +251,18 @@ void deliver_medicine_task(void)
 		speed_expect[1] = 0;	//右边轮子速度期望
 		speed_control_100hz(speed_ctrl_mode);
 
+		if(camera1.intrack_todo_task != 7)
+			camera1.cross = 0;  // 复位
 		if(camera1.intrack_todo_task == 4)   // 100 左转 
 		{	
-			// beep.period = 200;
-			// beep.light_on_percent = 0.5f;
-			// beep.reset = 1;
-			// beep.times = 3;
+			
+			beep.period = 200;
+			beep.light_on_percent = 0.5f;
+			beep.reset = 1;
+			beep.times = 3;
 
-			// flight_subtask_cnt[n] = contrarotate_90_task_state;  // 下一状态：左转90度
-			flight_subtask_cnt[n] = speed0_control;
+			flight_subtask_cnt[n] = contrarotate_90_task_state;  // 下一状态：左转90度
+			// flight_subtask_cnt[n] = speed0_control;
 		}
 		else if(camera1.intrack_todo_task == 2)  // 010 直走  
 		{
@@ -278,6 +281,13 @@ void deliver_medicine_task(void)
 			beep.light_on_percent = 0.5f;
 			beep.reset = 1;
 			beep.times = 3;
+		}
+		else
+		{
+			beep.period = 1000;
+			beep.light_on_percent = 1.0f;
+			beep.reset = 1;
+			beep.times = 1;
 		}
 	}
 
