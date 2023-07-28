@@ -2,9 +2,9 @@
 #include "vision.h"
 
 // -------------------------视觉任务类型------------------------------
-#define  Number_recognition_inbegin_task  0x01  // 用于起初识别数字的任务
-#define  Tracking_task  0x02    				// 循迹任务
-#define  Number_recognition_intrack_task  0x03  // 用于十字路口识别数字的任务
+#define  Number_recognition_inbegin_task  0xA1  // 用于起初识别数字的任务
+#define  Tracking_task  0xA2    				// 循迹任务
+#define  Number_recognition_intrack_task  0xA3  // 用于十字路口识别数字的任务
 
 
 unsigned char sdk_data_to_send[10]; 
@@ -92,7 +92,7 @@ void Get_Camera_Wide_Angle(float view_angle)
 uint16_t _CX=0,_CY=0;
 float _P1=0,_P2=0,_TX=0,_TY=0,_DX=0,_DY=0;
 /***************************************
-函数名:	void Sensor_Parameter_Sort(uint16_t tx,uint16_t ty,float pitch,float roll,float alt)
+函数名:	void Sensor_Parameter_Sort( uint16_t tx,uint16_t ty,float pitch,float roll,float alt)
 说明: 从图像坐标到实际距离偏移的转换
 入口:	uint16_t tx-图像坐标x
 			uint16_t ty-图像坐标y
@@ -166,23 +166,24 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
   if(!(sum==*(data_buf+num-1))) 	return;//不满足和校验条件
   if(!(*(data_buf)==0xFF && *(data_buf+1)==0xFC))return;//不满足帧头条件
 
-	target->x=*(data_buf+4)<<8 | *(data_buf+5);
-	target->flag=*(data_buf+6);
-	target->fps =*(data_buf+7);
-	target->sdk_mode=*(data_buf+2);
+	target->task=*(data_buf+2);  // 获取任务类别
 
 
-	//从左到右依次是bit16、bit15 、bit14、bit13...、bit1
-	// target->x0.value=target->x;
 
-	
 	if(target->camera_id==0x01)//摄像头id为OPENMV
 	{
-		switch(target->sdk_mode)
+		switch(target->task)
 		{
 
 			case Tracking_task:  // 视觉任务
 			{
+				
+				target->x = *(data_buf+4)<<8 | *(data_buf+5);
+				target->cross = *(data_buf+6);
+				target->flag = *(data_buf+7);
+				target->fps = *(data_buf+8);
+
+
 				target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
 				if(target->flag!=0)  
 				{
@@ -240,7 +241,46 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 						vision_status_worse++;
 					}							
 				}
+			}
+			case Number_recognition_inbegin_task:
+			{
+				target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
+				if(target->flag!=0)  
+				{
+					if(target->trust_cnt<20)	 
+					{
+						target->trust_cnt++;
+						target->trust_flag=0;
+					}
+					else target->trust_flag=1;
+				}
+				else 
+				{
+					target->trust_cnt/=2;
+					target->trust_flag=0;
+				}
+				target->inbegin_recognition_finsh_flag = *(data_buf+4);
+				
+			}
+			break;
+			case Number_recognition_intrack_task:
+			{
+				if(target->flag!=0)  
+				{
+					if(target->trust_cnt<20)	 
+					{
+						target->trust_cnt++;
+						target->trust_flag=0;
+					}
+					else target->trust_flag=1;
+				}
+				else 
+				{
+					target->trust_cnt/=2;
+					target->trust_flag=0;
+				}
 
+				target->intrack_todo_task = *(data_buf+4);
 			}
 			break;
 			default:  // 无模式

@@ -20,19 +20,17 @@ typedef union
 typedef struct
 {
 	uint16_t x;
-	uint8_t flag;	
+	uint8_t flag;
+	uint8_t cross;
 	uint8_t fps;
 	uint8_t camera_id;
-	uint8_t sdk_mode;
+	uint8_t task;   // 任务类别
 
+	uint8_t inbegin_recognition_finsh_flag;  // 起初数字识别成功标志位
+	uint8_t intrack_todo_task;   // 小车在赛道上应该执行的任务，向前，左转，右转
 
-	float x_cm;
-	float y_cm;
-	float z_cm;	
-	float x_pixel_size;
-	float y_pixel_size;
-	float z_pixel_size;
-	float apriltag_distance;
+	
+
 	uint16_t trust_cnt;
 	uint16_t trust_flag;
 	uint8_t line_ctrl_enable;
