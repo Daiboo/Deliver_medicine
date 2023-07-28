@@ -441,18 +441,18 @@ void deliver_medicine_task(void)
 
 	}
 // ------------------------------------   取药     ---------------------------------------
-	else if (flight_subtask_cnt[n] == if_medicine + 1)
-	{		
-		rangefinder_init(); //初始化超声波测距
-		if(rangefinder.sensor_type == box_weight)
-		{
+	// else if (flight_subtask_cnt[n] == if_medicine + 1)
+	// {		
+	// 	rangefinder_init(); //初始化超声波测距
+	// 	if(rangefinder.sensor_type == box_weight)
+	// 	{
 
-			beep.period = 200;
-			beep.light_on_percent = 0.5f;
-			beep.reset = 1;
-			beep.times = 3;
-		}
-	}
+	// 		beep.period = 200;
+	// 		beep.light_on_percent = 0.5f;
+	// 		beep.reset = 1;
+	// 		beep.times = 3;
+	// 	}
+	// }
 	
 
 
