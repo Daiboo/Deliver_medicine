@@ -67,7 +67,6 @@ void clockwise_rotate_90_task(void) //顺时针转90度
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);	
 	}
-
 }
 
 /**
@@ -81,7 +80,7 @@ void contrarotate_90_task(void)		//逆时针转90°
 	{
 		trackless_output.yaw_ctrl_mode=ANTI_CLOCKWISE;   // 偏航控制模式为相对偏航角度顺时针控制模式
 		trackless_output.yaw_ctrl_start=1;			// 偏航控制开始标志位
-		trackless_output.yaw_outer_control_output = 90;//逆时针90度	
+		trackless_output.yaw_outer_control_output = 90;// 逆时针90度	
 		flight_subtask_cnt[n]++;   		// 执行下一阶段任务：
 
 		speed_ctrl_mode = 1;
@@ -204,20 +203,20 @@ void deliver_medicine_task(void)
 	}
 
 // --------------------------------------------状态：放药--------------------------------------------
-	else if(flight_subtask_cnt[n] == if_medicine)//状态：有药才出发
-	{
-		rangefinder_init();
-		rangefinder.sensor_type = box_weight;
-		if(rangefinder.sensor_type < box_weight)
-		{
-			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
+	// else if(flight_subtask_cnt[n] == if_medicine)//状态：有药才出发
+	// {
+	// 	rangefinder_init();
+	// 	rangefinder.sensor_type = box_weight;
+	// 	if(rangefinder.sensor_type < box_weight)
+	// 	{
+	// 		flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
 
-			beep.period = 200;
-			beep.light_on_percent = 0.5f;
-			beep.reset = 1;
-			beep.times = 2;
-		}
-	}
+	// 		beep.period = 200;
+	// 		beep.light_on_percent = 0.5f;
+	// 		beep.reset = 1;
+	// 		beep.times = 2;
+	// 	}
+	// }
 
 // ------------------------------- 状态：循迹控制，直到识别到十字或停止位--------------------------------------
 	else if(flight_subtask_cnt[n] == tracking_control_until_recognition_cross_or_stop) // 状态：循迹控制 直到识别到十字
