@@ -222,6 +222,7 @@ void deliver_medicine_task(void)
 			beep.times = 2;
 		}
 	}
+
 // ------------------------------- 状态：循迹控制，直到识别到十字或停止位--------------------------------------
 	else if(flight_subtask_cnt[n] == tracking_control_until_recognition_cross_or_stop) // 状态：循迹控制 直到识别到十字
 	{
@@ -433,8 +434,23 @@ void deliver_medicine_task(void)
 		speed_expect[0] = 0;	//左边轮子速度期望
 		speed_expect[1] = 0;	//右边轮子速度期望
 		speed_control_100hz(speed_ctrl_mode);
+		flight_subtask_cnt[n] == if_medicine + 1;
 
 	}
+// ------------------------------------   取药     ---------------------------------------
+	else if (flight_subtask_cnt[n] == if_medicine + 1)
+	{		
+		rangefinder_init(); //初始化超声波测距
+		if(rangefinder.sensor_type == box_weight)
+		{
+
+			beep.period = 200;
+			beep.light_on_percent = 0.5f;
+			beep.reset = 1;
+			beep.times = 3;
+		}
+	}
+	
 
 
 
