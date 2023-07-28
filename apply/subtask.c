@@ -1,6 +1,6 @@
 #include "headfile.h"
 #include "subtask.h"
-
+#include "Ultrasonic.h"
 
 #define flight_subtask_delta 5//5ms
 
@@ -29,7 +29,7 @@ void subtask_reset(void)
 /**
  * @brief 顺时针旋转90度任务
 */
-void clockwise_rotate_90_task(void)		//顺时针转90度
+void clockwise_rotate_90_task(void) //顺时针转90度
 {
 	static uint8_t n = Clockwise_Rotation_90;	
 
@@ -177,9 +177,11 @@ typedef enum
 	speed0_control_until_receive_todo = 2,    // 状态：零速度控制，直到收到前左右转指令
 
 	speed0_control = 50,   		// 0速度控制
-
+	
 	clockwise_rotate_90_task_state = 100,  // 左转状态机
 	contrarotate_90_task_state = 120,		// 右转状态机
+
+	if_medicine = 200,
 	
 }Task_state;  // 状态机阶段
 
@@ -198,6 +200,22 @@ void deliver_medicine_task(void)
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
 			SDK_DT_Send_Check(Tracking_task);  // 发送循迹任务给openmv
 			camera1.inbegin_recognition_finsh_flag = 0;
+		}
+	}
+
+// --------------------------------------------状态：放药--------------------------------------------
+	else if(flight_subtask_cnt[n] == if_medicine)//状态：有药才出发
+	{
+		rangefinder_init();
+		rangefinder.sensor_type = box_weight;
+		if(rangefinder.sensor_type < box_weight)
+		{
+			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
+
+			beep.period = 200;
+			beep.light_on_percent = 0.5f;
+			beep.reset = 1;
+			beep.times = 2;
 		}
 	}
 
@@ -420,7 +438,23 @@ void deliver_medicine_task(void)
 		speed_expect[0] = 0;	//左边轮子速度期望
 		speed_expect[1] = 0;	//右边轮子速度期望
 		speed_control_100hz(speed_ctrl_mode);
+		flight_subtask_cnt[n] == if_medicine + 1;
+
 	}
+// ------------------------------------   取药     ---------------------------------------
+	else if (flight_subtask_cnt[n] == if_medicine + 1)
+	{		
+		rangefinder_init(); //初始化超声波测距
+		if(rangefinder.sensor_type == box_weight)
+		{
+
+			beep.period = 200;
+			beep.light_on_percent = 0.5f;
+			beep.reset = 1;
+			beep.times = 3;
+		}
+	}
+	
 
 
 

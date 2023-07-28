@@ -175,7 +175,7 @@ void rangefinder_init(void)
 	switch(rangefinder.sensor_type)
 	{
 		case 0:hcsr04_init();break;
-	  case 1:UART5_Init(9600);break;
+	  	case 1:UART5_Init(9600);break;
 		default:UART5_Init(9600);
 	}
 	
@@ -201,7 +201,9 @@ void rangefinder_statemachine(void)
 	switch(rangefinder.sensor_type)
 	{
 		case 0:hcsr04_statemachine();break;
-	  case 1:us100_statemachine();break;
+	  	case 1:us100_statemachine();break;
 		default:us100_statemachine();
 	}
 }	
+
+
