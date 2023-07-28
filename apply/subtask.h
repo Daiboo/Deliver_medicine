@@ -11,7 +11,29 @@ typedef enum
 	Contrarotate_90,
     Speed_Control,
     Distance_Control,
+    Deliver_Medicine,
 }Task_Type;
+
+// ----------------------------------------送药小车任务------------------------------------------
+
+
+
+#define deliver_medicine_car_speed_default 30.0f
+#define start_point_precision_cm 0.5f
+#define fix_rotate_point_default 20.0f
+#define start_point_fit_times   20//连续n次满足位置偏差很小,即认为位置控制完成
+#define distance_precision_cm 1.0f
+#define target_point_fit_times   10
+
+
+typedef struct 
+{
+	float speed;			// 任务中小车的速度
+	float fix_rotate_point;  // 任务中距离点修正
+}Deliver_medicine_task_param;
+
+
+extern Deliver_medicine_task_param __deliver_medicine_task_param;
 
 
 

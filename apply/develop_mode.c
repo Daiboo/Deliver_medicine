@@ -48,6 +48,10 @@ void sdk_duty_run(void)
 			contrarotate_90_task();
 		}
 		break;
+		case Deliver_Medicine:
+		{
+			deliver_medicine_task();
+		}
 
 //		case 0://遥控控制模式
 //		{

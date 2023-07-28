@@ -1,10 +1,7 @@
 #include "Headfile.h"
 #include "vision.h"
 
-// -------------------------视觉任务类型------------------------------
-#define  Number_recognition_inbegin_task  0xA1  // 用于起初识别数字的任务
-#define  Tracking_task  0xA2    				// 循迹任务
-#define  Number_recognition_intrack_task  0xA3  // 用于十字路口识别数字的任务
+
 
 
 unsigned char sdk_data_to_send[10]; 
@@ -18,7 +15,7 @@ unsigned char sdk_data_to_send[10];
 备注:	无
 作者:	无名创新
 ***************************************/
-void SDK_DT_Send_Check(unsigned char mode,COM_SDK com)
+void SDK_DT_Send_Check(uint8_t mode,COM_SDK com)
 {
 	sdk_data_to_send[0]=0xFF;
 	sdk_data_to_send[1]=0xFE;

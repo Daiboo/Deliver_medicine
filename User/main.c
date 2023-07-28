@@ -37,8 +37,8 @@ int main()
 	Button_Init();					//板载按键初始化
 	NTimer_Init();
 	
-	page_number = 0;
-	sdk_work_mode = 3;
+	page_number = 6;
+	sdk_work_mode = Deliver_Medicine;
 	while(1)
 	{
 		screen_display();//屏幕显示

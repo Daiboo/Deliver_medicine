@@ -4,6 +4,16 @@
 #define SDK_Target_Length  53//45
 #include "Headfile.h"
 
+
+// -------------------------视觉任务类型------------------------------
+#define  Number_recognition_inbegin_task  0xA1  // 用于起初识别数字的任务
+#define  Tracking_task  0xA2    				// 循迹任务
+#define  Number_recognition_intrack_task  0xA3  // 用于十字路口识别数字的任务
+
+
+
+
+
 typedef enum 
 {
 	UART7_SDK=0,
@@ -40,6 +50,8 @@ typedef struct
 	split_state x0;
 
 }Target_Check;//目标检测
+
+void SDK_DT_Send_Check(uint8_t mode,COM_SDK com);
 
 void SDK_Data_Receive_Prepare_1(uint8_t data);
 void SDK_Data_Receive_Prepare_2(uint8_t data);

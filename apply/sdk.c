@@ -86,14 +86,14 @@ void trackless_params_init(void)
 
 
 
-	//预留参数
-	// float tmp_reserved_params[20];
-	// for(uint16_t i=0;i<20;i++)
-	// {
-	// 	ReadFlashParameterOne(RESERVED_PARAMS_1+i,&tmp_reserved_params[i]);
-	// }
-	// if(isnan(tmp_reserved_params[0])==0) 	park_params._track_speed_cmps=tmp_reserved_params[0];								else park_params._track_speed_cmps=track_speed_cmps_default;
-	// if(isnan(tmp_reserved_params[1])==0) 	park_params._start_point_adjust1=tmp_reserved_params[1];						else park_params._start_point_adjust1=start_point_adjust1_default;
+	// 预留参数
+	float tmp_reserved_params[5];
+	for(uint16_t i=0;i<5;i++)
+	{
+		ReadFlashParameterOne(DELIVER_MEDICINE_SPEED+i,&tmp_reserved_params[i]);
+	}
+	if(isnan(tmp_reserved_params[0])==0) 	__deliver_medicine_task_param.speed=tmp_reserved_params[0];								else __deliver_medicine_task_param.speed = deliver_medicine_car_speed_default;
+	if(isnan(tmp_reserved_params[1])==0) 	__deliver_medicine_task_param.fix_rotate_point=tmp_reserved_params[1];						else __deliver_medicine_task_param.fix_rotate_point = fix_rotate_point_default;
 	// if(isnan(tmp_reserved_params[2])==0) 	park_params._forward_distance_cm=tmp_reserved_params[2];						else park_params._forward_distance_cm=forward_distance_cm_default;
 	// if(isnan(tmp_reserved_params[3])==0) 	park_params._backward_distance1_cm=tmp_reserved_params[3];					else park_params._backward_distance1_cm=backward_distance1_cm_default;
 	// if(isnan(tmp_reserved_params[4])==0) 	park_params._backward_distance2_cm=tmp_reserved_params[4];					else park_params._backward_distance2_cm=backward_distance2_cm_default;

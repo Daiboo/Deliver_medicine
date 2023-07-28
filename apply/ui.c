@@ -193,8 +193,6 @@ void screen_display(void)
 				smartcar_imu.imu_cal_flag=0;//重新校准加速度、陀螺仪
 			}
 			
-			
-
 		}
 		break;
 // 第三页
@@ -561,19 +559,22 @@ void screen_display(void)
 
 			ssd1306_display();
 			display_6_8_string(0,0,"point_x:");  write_6_8_number(80,0,camera1.x);		write_6_8_number(105,0,page_number+1);
-			display_6_8_string(0,1,"mode::"); write_6_8_number(80,1,camera1.sdk_mode);
+			display_6_8_string(0,1,"mode::"); 	 write_6_8_number(80,1,camera1.task);
 			display_6_8_string(0,2,"point_f:");  write_6_8_number(80,3,camera1.flag);
 			display_6_8_string(0,3,"FPS:");      write_6_8_number(80,6,camera1.fps);
+			display_6_8_string(0,4,"cross:");      write_6_8_number(80,6,camera1.cross);
+			display_6_8_string(0,5,"be_finish_f:");      write_6_8_number(90,6,camera1.inbegin_recognition_finsh_flag);
+			display_6_8_string(0,6,"todo:");      write_6_8_number(80,6,camera1.intrack_todo_task);
 
 
 		}
 		break;
 
 // 第八页
-		// case 7:
-		// {	
-		// 	Delay_Ms(20);
-		// 	LCD_clear_L(0,0);	display_6_8_string(0,0,"basic");	display_6_8_number(110,0,page_number+1);
+		case 7:
+		{	
+			Delay_Ms(20);
+			LCD_clear_L(0,0);	display_6_8_string(0,0,"basic");	display_6_8_number(110,0,page_number+1);
 		/*
 			1 无
 			2 第1 个参数为巡线时的期望定速巡航速度；
@@ -590,210 +591,210 @@ void screen_display(void)
 
 			*/
 
-		// 	LCD_clear_L(0,0);	display_6_8_string(0,0,"reserved_params");	display_6_8_number(115,0,page_number+1);
+			LCD_clear_L(0,0);	display_6_8_string(0,0,"Deliver_medicine");	display_6_8_number(115,0,page_number+1);
 				
-		// 	LCD_clear_L(0,1);	display_6_8_string(0,1,"speed");			write_6_8_number_f1(45,1,park_params._track_speed_cmps);
-		// 	LCD_clear_L(0,2);	display_6_8_string(0,2,"stop1");			write_6_8_number_f1(45,2,park_params._start_point_adjust1);;
-		// 	LCD_clear_L(0,3);	display_6_8_string(0,3,"ac123");			write_6_8_number_f1(45,3,park_params._forward_distance_cm);
-		// 																	write_6_8_number_f1(75,3,park_params._backward_distance1_cm);
-		// 																	write_6_8_number_f1(105,3,park_params._backward_distance2_cm);
-		// 	LCD_clear_L(0,4);	display_6_8_string(0,4,"ac45");			  	write_6_8_number_f1(45,4,park_params._out_forward_distance1_cm);	
-		// 																	write_6_8_number_f1(75,4,park_params._out_forward_distance2_cm);
+			LCD_clear_L(0,1);	display_6_8_string(0,1,"speed");			write_6_8_number_f1(45,1,__deliver_medicine_task_param.speed);
+			LCD_clear_L(0,2);	display_6_8_string(0,2,"f_r_p");			write_6_8_number_f1(45,2,__deliver_medicine_task_param.fix_rotate_point);
+			// LCD_clear_L(0,3);	display_6_8_string(0,3,"ac123");			write_6_8_number_f1(45,3,park_params._forward_distance_cm);
+			// 																write_6_8_number_f1(75,3,park_params._backward_distance1_cm);
+			// 																write_6_8_number_f1(105,3,park_params._backward_distance2_cm);
+			// LCD_clear_L(0,4);	display_6_8_string(0,4,"ac45");			  	write_6_8_number_f1(45,4,park_params._out_forward_distance1_cm);	
+			// 																write_6_8_number_f1(75,4,park_params._out_forward_distance2_cm);
 			
-		// 	LCD_clear_L(0,5);	display_6_8_string(0,5,"stop2");			write_6_8_number_f1(45,5,park_params._start_point_adjust2);
-		// 	LCD_clear_L(0,6);	display_6_8_string(0,6,"ac12");			  	write_6_8_number_f1(45,6,park_params._parallel_backward_distance1_cm);
-		// 																	write_6_8_number_f1(75,6,park_params._parallel_backward_distance2_cm);	
-		// 	LCD_clear_L(0,7);	display_6_8_string(0,7,"ac3");				write_6_8_number_f1(45,7,park_params._parallel_backward_distance3_cm);
+			// LCD_clear_L(0,5);	display_6_8_string(0,5,"stop2");			write_6_8_number_f1(45,5,park_params._start_point_adjust2);
+			// LCD_clear_L(0,6);	display_6_8_string(0,6,"ac12");			  	write_6_8_number_f1(45,6,park_params._parallel_backward_distance1_cm);
+			// 																write_6_8_number_f1(75,6,park_params._parallel_backward_distance2_cm);	
+			// LCD_clear_L(0,7);	display_6_8_string(0,7,"ac3");				write_6_8_number_f1(45,7,park_params._parallel_backward_distance3_cm);
 			
 			
-		// 	static uint8_t ver_choose=1;
-		// 	if(ver_choose==1)				display_6_8_string(35,1,"*");
-		// 	else if(ver_choose==2)	display_6_8_string(35,2,"*");
-		// 	else if(ver_choose==3)	display_6_8_string(35,3,"*");
-		// 	else if(ver_choose==4)	display_6_8_string(68,3,"*");
-		// 	else if(ver_choose==5)	display_6_8_string(98,3,"*");
-		// 	else if(ver_choose==6)	display_6_8_string(35,4,"*");
-		// 	else if(ver_choose==7)	display_6_8_string(68,4,"*");
-		// 	else if(ver_choose==8)	display_6_8_string(35,5,"*");
-		// 	else if(ver_choose==9)	display_6_8_string(35,6,"*");
-		// 	else if(ver_choose==10)	display_6_8_string(68,6,"*");
-		// 	else if(ver_choose==11)	display_6_8_string(35,7,"*");
-		// 	else display_6_8_string(35,ver_choose,"*");
+			static uint8_t ver_choose=1;
+			if(ver_choose==1)				display_6_8_string(35,1,"*");
+			else if(ver_choose==2)	display_6_8_string(35,2,"*");
+			// else if(ver_choose==3)	display_6_8_string(35,3,"*");
+			// else if(ver_choose==4)	display_6_8_string(68,3,"*");
+			// else if(ver_choose==5)	display_6_8_string(98,3,"*");
+			// else if(ver_choose==6)	display_6_8_string(35,4,"*");
+			// else if(ver_choose==7)	display_6_8_string(68,4,"*");
+			// else if(ver_choose==8)	display_6_8_string(35,5,"*");
+			// else if(ver_choose==9)	display_6_8_string(35,6,"*");
+			// else if(ver_choose==10)	display_6_8_string(68,6,"*");
+			// else if(ver_choose==11)	display_6_8_string(35,7,"*");
+			else display_6_8_string(35,ver_choose,"*");
 			
-		// 	//通过3D按键来实现换行选中待修改参数
-		// 	if(_button.state[UP_3D].press==SHORT_PRESS)
-		// 	{
-		// 			_button.state[UP_3D].press=NO_PRESS;
-		// 			ver_choose--;
-		// 			if(ver_choose<1) ver_choose=11;	
-		// 	}
-		// 	if(_button.state[DN_3D].press==SHORT_PRESS)
-		// 	{
-		// 			_button.state[DN_3D].press=NO_PRESS;
-		// 			ver_choose++;
-		// 			if(ver_choose>11) ver_choose=1;		
-		// 	}
+			//通过3D按键来实现换行选中待修改参数
+			if(_button.state[UP_3D].press==SHORT_PRESS)
+			{
+					_button.state[UP_3D].press=NO_PRESS;
+					ver_choose--;
+					if(ver_choose<1) ver_choose=11;	
+			}
+			if(_button.state[DN_3D].press==SHORT_PRESS)
+			{
+					_button.state[DN_3D].press=NO_PRESS;
+					ver_choose++;
+					if(ver_choose>11) ver_choose=1;		
+			}
 
-		// 	park_params._track_speed_cmps=constrain_float(park_params._track_speed_cmps,-100,100);
-		// 	park_params._start_point_adjust1=constrain_float(park_params._start_point_adjust1,-100,100);
-		// 	park_params._forward_distance_cm=constrain_float(park_params._forward_distance_cm,-100,100);
-		// 	park_params._backward_distance1_cm=constrain_float(park_params._backward_distance1_cm,-100,100);
-		// 	park_params._backward_distance2_cm=constrain_float(park_params._backward_distance2_cm,-100,100);
-		// 	park_params._out_forward_distance1_cm=constrain_float(park_params._out_forward_distance1_cm,-100,100);
-		// 	park_params._out_forward_distance2_cm=constrain_float(park_params._out_forward_distance2_cm,-100,100);
-		// 	park_params._start_point_adjust2=constrain_float(park_params._start_point_adjust2,-100,100);
-		// 	park_params._parallel_backward_distance1_cm=constrain_float(park_params._parallel_backward_distance1_cm,-100,100);
-		// 	park_params._parallel_backward_distance2_cm=constrain_float(park_params._parallel_backward_distance2_cm,-100,100);
-		// 	park_params._parallel_backward_distance3_cm=constrain_float(park_params._parallel_backward_distance3_cm,-100,100);	
+			__deliver_medicine_task_param.speed=constrain_float(__deliver_medicine_task_param.speed,-50,50);
+			__deliver_medicine_task_param.fix_rotate_point = constrain_float(__deliver_medicine_task_param.fix_rotate_point,-60,60);
+			// park_params._forward_distance_cm=constrain_float(park_params._forward_distance_cm,-100,100);
+			// park_params._backward_distance1_cm=constrain_float(park_params._backward_distance1_cm,-100,100);
+			// park_params._backward_distance2_cm=constrain_float(park_params._backward_distance2_cm,-100,100);
+			// park_params._out_forward_distance1_cm=constrain_float(park_params._out_forward_distance1_cm,-100,100);
+			// park_params._out_forward_distance2_cm=constrain_float(park_params._out_forward_distance2_cm,-100,100);
+			// park_params._start_point_adjust2=constrain_float(park_params._start_point_adjust2,-100,100);
+			// park_params._parallel_backward_distance1_cm=constrain_float(park_params._parallel_backward_distance1_cm,-100,100);
+			// park_params._parallel_backward_distance2_cm=constrain_float(park_params._parallel_backward_distance2_cm,-100,100);
+			// park_params._parallel_backward_distance3_cm=constrain_float(park_params._parallel_backward_distance3_cm,-100,100);	
 			
-		// 	//通过3D按键来实现可以实现选中的参数行自增加调整
-		// 	if(_button.state[RT_3D].press==SHORT_PRESS)
-		// 	{
-		// 		change_flag=1;
-		// 		_button.state[RT_3D].press=NO_PRESS;
-		// 		switch(ver_choose)
-		// 		{
-		// 			case 1:
-		// 			{
-		// 				park_params._track_speed_cmps+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 2:
-		// 			{
-		// 				park_params._start_point_adjust1+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 3:
-		// 			{
-		// 				park_params._forward_distance_cm+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 4:
-		// 			{
-		// 				park_params._backward_distance1_cm+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 5:
-		// 			{
-		// 				park_params._backward_distance2_cm+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 6:
-		// 			{
-		// 				park_params._out_forward_distance1_cm+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 7:
-		// 			{
-		// 				park_params._out_forward_distance2_cm+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 8:
-		// 			{
-		// 				park_params._start_point_adjust2+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 9:
-		// 			{
-		// 				park_params._parallel_backward_distance1_cm+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 10:
-		// 			{
-		// 				park_params._parallel_backward_distance2_cm+=0.1f;
-		// 			}
-		// 			break;
-		// 			case 11:
-		// 			{
-		// 				park_params._parallel_backward_distance3_cm+=0.1f;
-		// 			}
-		// 			break;					
-		// 		}			
-		// 	}	
+			//通过3D按键来实现可以实现选中的参数行自增加调整
+			if(_button.state[RT_3D].press==SHORT_PRESS)
+			{
+				change_flag=1;
+				_button.state[RT_3D].press=NO_PRESS;
+				switch(ver_choose)
+				{
+					case 1:
+					{
+						__deliver_medicine_task_param.speed += 0.1f;
+					}
+					break;
+					case 2:
+					{
+						__deliver_medicine_task_param.fix_rotate_point += 0.1f;
+					}
+					break;
+					// case 3:
+					// {
+					// 	park_params._forward_distance_cm+=0.1f;
+					// }
+					// break;
+					// case 4:
+					// {
+					// 	park_params._backward_distance1_cm+=0.1f;
+					// }
+					// break;
+					// case 5:
+					// {
+					// 	park_params._backward_distance2_cm+=0.1f;
+					// }
+					// break;
+					// case 6:
+					// {
+					// 	park_params._out_forward_distance1_cm+=0.1f;
+					// }
+					// break;
+					// case 7:
+					// {
+					// 	park_params._out_forward_distance2_cm+=0.1f;
+					// }
+					// break;
+					// case 8:
+					// {
+					// 	park_params._start_point_adjust2+=0.1f;
+					// }
+					// break;
+					// case 9:
+					// {
+					// 	park_params._parallel_backward_distance1_cm+=0.1f;
+					// }
+					// break;
+					// case 10:
+					// {
+					// 	park_params._parallel_backward_distance2_cm+=0.1f;
+					// }
+					// break;
+					// case 11:
+					// {
+					// 	park_params._parallel_backward_distance3_cm+=0.1f;
+					// }
+					// break;					
+				}			
+			}	
 
-		// 	//通过3D按键来实现可以实现选中的参数行自增减调整
-		// 	if(_button.state[LT_3D].press==SHORT_PRESS)
-		// 	{
-		// 		change_flag=1;
-		// 		_button.state[LT_3D].press=NO_PRESS;
-		// 		switch(ver_choose)
-		// 		{
-		// 			case 1:
-		// 			{
-		// 				park_params._track_speed_cmps-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 2:
-		// 			{
-		// 				park_params._start_point_adjust1-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 3:
-		// 			{
-		// 				park_params._forward_distance_cm-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 4:
-		// 			{
-		// 				park_params._backward_distance1_cm-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 5:
-		// 			{
-		// 				park_params._backward_distance2_cm-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 6:
-		// 			{
-		// 				park_params._out_forward_distance1_cm-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 7:
-		// 			{
-		// 				park_params._out_forward_distance2_cm-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 8:
-		// 			{
-		// 				park_params._start_point_adjust2-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 9:
-		// 			{
-		// 				park_params._parallel_backward_distance1_cm-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 10:
-		// 			{
-		// 				park_params._parallel_backward_distance2_cm-=0.1f;
-		// 			}
-		// 			break;
-		// 			case 11:
-		// 			{
-		// 				park_params._parallel_backward_distance3_cm-=0.1f;
-		// 			}
-		// 			break;
-		// 		}					
-		// 	}
-		// 	if(change_flag==1)
-		// 	{
-		// 		change_flag=0;
-		// 		//按下后对参数进行保存
-		// 		WriteFlashParameter(RESERVED_PARAMS_1,park_params._track_speed_cmps,&Trackless_Params);
-		// 		WriteFlashParameter(RESERVED_PARAMS_2,park_params._start_point_adjust1,&Trackless_Params);			
-		// 		WriteFlashParameter(RESERVED_PARAMS_3,park_params._forward_distance_cm,&Trackless_Params);
-		// 		WriteFlashParameter(RESERVED_PARAMS_4,park_params._backward_distance1_cm,&Trackless_Params);
-		// 		WriteFlashParameter(RESERVED_PARAMS_5,park_params._backward_distance2_cm,&Trackless_Params);
-		// 		WriteFlashParameter(RESERVED_PARAMS_6,park_params._out_forward_distance1_cm,&Trackless_Params);
-		// 		WriteFlashParameter(RESERVED_PARAMS_7,park_params._out_forward_distance2_cm,&Trackless_Params);
-		// 		WriteFlashParameter(RESERVED_PARAMS_8,park_params._start_point_adjust2,&Trackless_Params);	
-		// 		WriteFlashParameter(RESERVED_PARAMS_9,park_params._parallel_backward_distance1_cm,&Trackless_Params);
-		// 		WriteFlashParameter(RESERVED_PARAMS_10,park_params._parallel_backward_distance2_cm,&Trackless_Params);
-		// 		WriteFlashParameter(RESERVED_PARAMS_11,park_params._parallel_backward_distance3_cm,&Trackless_Params);
-		// 	}
+			//通过3D按键来实现可以实现选中的参数行自增减调整
+			if(_button.state[LT_3D].press==SHORT_PRESS)
+			{
+				change_flag=1;
+				_button.state[LT_3D].press=NO_PRESS;
+				switch(ver_choose)
+				{
+					case 1:
+					{
+						__deliver_medicine_task_param.speed -= 0.1f;
+					}
+					break;
+					case 2:
+					{
+						__deliver_medicine_task_param.fix_rotate_point -= 0.1f;
+					}
+					break;
+					// case 3:
+					// {
+					// 	park_params._forward_distance_cm-=0.1f;
+					// }
+					// break;
+					// case 4:
+					// {
+					// 	park_params._backward_distance1_cm-=0.1f;
+					// }
+					// break;
+					// case 5:
+					// {
+					// 	park_params._backward_distance2_cm-=0.1f;
+					// }
+					// break;
+					// case 6:
+					// {
+					// 	park_params._out_forward_distance1_cm-=0.1f;
+					// }
+					// break;
+					// case 7:
+					// {
+					// 	park_params._out_forward_distance2_cm-=0.1f;
+					// }
+					// break;
+					// case 8:
+					// {
+					// 	park_params._start_point_adjust2-=0.1f;
+					// }
+					// break;
+					// case 9:
+					// {
+					// 	park_params._parallel_backward_distance1_cm-=0.1f;
+					// }
+					// break;
+					// case 10:
+					// {
+					// 	park_params._parallel_backward_distance2_cm-=0.1f;
+					// }
+					// break;
+					// case 11:
+					// {
+					// 	park_params._parallel_backward_distance3_cm-=0.1f;
+					// }
+					// break;
+				}					
+			}
+			if(change_flag==1)
+			{
+				change_flag=0;
+				//按下后对参数进行保存
+				WriteFlashParameter(DELIVER_MEDICINE_SPEED,__deliver_medicine_task_param.speed,&Trackless_Params);
+				WriteFlashParameter(FIX_ROTATE_POINT,__deliver_medicine_task_param.fix_rotate_point,&Trackless_Params);			
+				// WriteFlashParameter(RESERVED_PARAMS_3,park_params._forward_distance_cm,&Trackless_Params);
+				// WriteFlashParameter(RESERVED_PARAMS_4,park_params._backward_distance1_cm,&Trackless_Params);
+				// WriteFlashParameter(RESERVED_PARAMS_5,park_params._backward_distance2_cm,&Trackless_Params);
+				// WriteFlashParameter(RESERVED_PARAMS_6,park_params._out_forward_distance1_cm,&Trackless_Params);
+				// WriteFlashParameter(RESERVED_PARAMS_7,park_params._out_forward_distance2_cm,&Trackless_Params);
+				// WriteFlashParameter(RESERVED_PARAMS_8,park_params._start_point_adjust2,&Trackless_Params);	
+				// WriteFlashParameter(RESERVED_PARAMS_9,park_params._parallel_backward_distance1_cm,&Trackless_Params);
+				// WriteFlashParameter(RESERVED_PARAMS_10,park_params._parallel_backward_distance2_cm,&Trackless_Params);
+				// WriteFlashParameter(RESERVED_PARAMS_11,park_params._parallel_backward_distance3_cm,&Trackless_Params);
+			}
 
-		// }
-		// break;    
+		}
+		break;    
 
 // 三十二页
 		case Page_Number_Max-1:  // 出厂调试模式
