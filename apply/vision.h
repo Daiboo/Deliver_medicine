@@ -41,9 +41,12 @@ typedef struct
 
 	
 
-	uint16_t trust_cnt;
-	uint16_t trust_flag;
-	uint8_t line_ctrl_enable;
+	uint16_t trust_cnt_tracking_or_cross;
+	uint16_t trust_flag_tracking_or_cross;
+	
+	uint16_t trust_cnt_number_recongition;
+	uint16_t trust_flag_number_recongition;
+
 	uint8_t target_ctrl_enable;
 	vector3f sdk_target,sdk_target_offset;
 	float sdk_angle;

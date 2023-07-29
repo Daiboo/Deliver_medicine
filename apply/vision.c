@@ -174,30 +174,23 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 			target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
 			if(target->flag!=0)  
 			{
-				if(target->trust_cnt<20)	 
+				if(target->trust_cnt_tracking_or_cross<20)	 
 				{
-					target->trust_cnt++;
-					target->trust_flag=0;
+					target->trust_cnt_tracking_or_cross++;
+					target->trust_flag_tracking_or_cross = 0;
 				}
-				else target->trust_flag=1;
+				else target->trust_flag_tracking_or_cross = 1;
 			}
 			else 
 			{
-				target->trust_cnt/=2;
-				target->trust_flag=0;
+				target->trust_cnt_tracking_or_cross /= 2;
+				target->trust_flag_tracking_or_cross = 0;
 			}	
 
 			
 			switch(target->x)
 			{
-				case 0x0001:gray_status[1]=-15; vision_status_worse/=2;break;											//0000-0000-0000-0001b
-				case 0x0003:gray_status[1]=-14; vision_status_worse/=2;break;											//0000-0000-0000-0011b
-				case 0x0002:gray_status[1]=-13;	vision_status_worse/=2;break;											//0000-0000-0000-0010b
-				case 0x0006:gray_status[1]=-12;	vision_status_worse/=2;break;											//0000-0000-0000-0110b
-				case 0x0004:gray_status[1]=-11;	vision_status_worse/=2;break;											//0000-0000-0000-0100b
-				case 0x000C:gray_status[1]=-10;	vision_status_worse/=2;break;											//0000-0000-0000-1100b
-				case 0x0008:gray_status[1]=-9;	vision_status_worse/=2;break;											//0000-0000-0000-1000b
-				case 0x0018:gray_status[1]=-8;	vision_status_worse/=2;break;											//0000-0000-0001-1000b
+
 				case 0x0010:gray_status[1]=-7;	vision_status_worse/=2;break;											//0000-0000-0001-0000b
 				case 0x0030:gray_status[1]=-6;	vision_status_worse/=2;break;											//0000-0000-0011-0000b
 				case 0x0020:gray_status[1]=-5;	vision_status_worse/=2;break;											//0000-0000-0010-0000b
@@ -213,14 +206,7 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 				case 0x0400:gray_status[1]=5;	vision_status_worse/=2;break;											//0000-0100-0000-0000b
 				case 0x0C00:gray_status[1]=6;	vision_status_worse/=2;break;											//0000-1100-0000-0000b
 				case 0x0800:gray_status[1]=7;	vision_status_worse/=2;break;											//0000-1000-0000-0000b
-				case 0x1800:gray_status[1]=8;	vision_status_worse/=2;break;											//0001-1000-0000-0000b
-				case 0x1000:gray_status[1]=9;	vision_status_worse/=2;break;											//0001-0000-0000-0000b
-				case 0x3000:gray_status[1]=10;	vision_status_worse/=2;break;											//0011-0000-0000-0000b
-				case 0x2000:gray_status[1]=11;	vision_status_worse/=2;break;											//0010-0000-0000-0000b
-				case 0x6000:gray_status[1]=12;	vision_status_worse/=2;break;											//0110-0000-0000-0000b
-				case 0x4000:gray_status[1]=13;	vision_status_worse/=2;break;											//0100-0000-0000-0000b
-				case 0xC000:gray_status[1]=14;	vision_status_worse/=2;break;											//1100-0000-0000-0000b
-				case 0x8000:gray_status[1]=15;	vision_status_worse/=2;break;											//1000-0000-0000-0000b
+
 				case 0x0000:gray_status[1]=gray_status_backup[1][0];vision_status_worse++;break;  //0000-0000-0000-0000b
 				default:
 				{
@@ -231,49 +217,38 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 		}
 		case Number_recognition_inbegin_task:
 		{
-			target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
-			if(target->flag!=0)  
-			{
-				if(target->trust_cnt<20)	 
-				{
-					target->trust_cnt++;
-					target->trust_flag=0;
-				}
-				else target->trust_flag=1;
-			}
-			else 
-			{
-				target->trust_cnt/=2;
-				target->trust_flag=0;
-			}
+
 			target->inbegin_recognition_finsh_flag = *(data_buf+4);
 			
 		}
 		break;
-		case Number_recognition_intrack_task:
+		case Number_recognition_intrack_task:  
 		{
-			if(target->flag!=0)  
+			target->intrack_todo_task = *(data_buf+4);
+
+
+			if(target->intrack_todo_task != 7)  
 			{
-				if(target->trust_cnt<20)	 
+				if(target->trust_cnt_number_recongition < 10)	 
 				{
-					target->trust_cnt++;
-					target->trust_flag=0;
+					target->trust_cnt_number_recongition++;
+					target->trust_flag_number_recongition = 0;
 				}
-				else target->trust_flag=1;
+				else target->trust_flag_number_recongition = 1;
 			}
 			else 
 			{
-				target->trust_cnt/=2;
-				target->trust_flag=0;
+				target->trust_cnt_number_recongition /= 2;
+				target->trust_flag_number_recongition = 0;
 			}
 
-			target->intrack_todo_task = *(data_buf+4);
+			
 		}
 		break;
-		default:  // 无模式
+		default:  
 		{
-			target->target_ctrl_enable=0;
-			target->trust_flag=0;
+			target->target_ctrl_enable = 0;
+			
 			target->x=0;
 		}
 	}
