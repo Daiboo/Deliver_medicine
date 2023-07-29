@@ -206,12 +206,72 @@ void nmotor_output(uint8_t _speed_ctrl_mode)
 			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_3,0);	          //PH3——M0PWM3 
 		}	
 	}
-	
-
-	
 }
 
+/**
+ * @brief 开环输出pwm
+*/
+void Open_Loop_Motor_Output(int16_t left_pwm, int16_t right_pwm)
+{
 
+	left_pwm =constrain_float(left_pwm,-motor_max_default,motor_max_default);
+	right_pwm=constrain_float(right_pwm,-motor_max_default,motor_max_default);
+	
+	//右边电机输出
+	if(trackless_motor.right_motion_dir_config==0)
+	{
+		if(right_pwm>=0)
+		{
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_0,0);			 				//PH0——M0PWM0 
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_1,right_pwm);			//PH1——M0PWM1
+		}
+		else
+		{
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_0,ABS(right_pwm));	//PH0——M0PWM0 
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_1,0);			       	//PH1——M0PWM1 	
+		}
+	}
+	else
+	{
+		if(right_pwm>=0)
+		{
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_0,right_pwm);//PH0——M0PWM0 
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_1,0);			  //PH1——M0PWM1
+		}
+		else
+		{
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_0,0);	           //PH0——M0PWM0 
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_1,ABS(right_pwm));//PH1——M0PWM1 	
+		}
+	}
+	//左边电机输出
+	if(trackless_motor.left_motion_dir_config==0)
+	{	
+		if(left_pwm>=0)
+		{
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_2,left_pwm);  			//PH2——M0PWM2 
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_3,0);				 			//PH3——M0PWM3  		
+		}
+		else
+		{
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_2,0); 							//PH2——M0PWM2 
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_3,ABS(left_pwm));	//PH3——M0PWM3 
+		}
+	}
+	else
+	{
+		if(left_pwm>=0)
+		{
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_2,0);  			//PH2——M0PWM2 
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_3,left_pwm);	//PH3——M0PWM3  		
+		}
+		else
+		{
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_2,ABS(left_pwm));//PH2——M0PWM2 
+			PWMPulseWidthSet(PWM0_BASE,PWM_OUT_3,0);	          //PH3——M0PWM3 
+		}	
+	}
+}
 
 
 
