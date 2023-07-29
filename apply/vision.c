@@ -165,7 +165,7 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 		case Tracking_task:  // 视觉任务
 		{
 			
-			target->x = *(data_buf+4)<<8 | *(data_buf+5);
+			target->x = *(data_buf+4);  // 发来的是前8位
 			target->cross = *(data_buf+6);
 			target->flag = *(data_buf+7);
 			target->fps = *(data_buf+8);
