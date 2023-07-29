@@ -17,11 +17,17 @@ sensor.set_vflip(True)              #设置翻转
 sensor.set_contrast(3)
 sensor.set_gainceiling(16)
 sensor.set_pixformat(sensor.GRAYSCALE)
+import lcd
+
+lcd.init()
+
 clock = time.clock()                # Create a clock object to track the FPS.
 
 #sensor.set_auto_exposure(True, exposure_us=5000) # 设置自动曝光sensor.get_exposure_us()
 
 uart=UART(3,256000)  # 串口
+
+
 
 
 # -------------------------------------------预变量--------------------------------------------
@@ -73,10 +79,6 @@ def time_callback(info):
 
 timer=Timer(2,freq=2)  # 计时器2，频率为4hz,0.25s
 timer.callback(time_callback)  # 0.25s调用一次
-
-
-
-
 
 # -----------------------------------------任务控制------------------------------------------------
 
@@ -171,10 +173,12 @@ def package_blobs_data(task):
     elif task == task_type.Number_recognition_inbegin_task:
         data = bytearray([HEADER[0],HEADER[1],task,0x00,
         target_data_begin.flag,
+        target_data_graysensor.fps,      #数据有效标志位
         0x00])
     elif task == task_type.Number_recognition_intrack_task:
         data = bytearray([HEADER[0],HEADER[1],task,0x00,
         target_data_needtodo.x,
+        target_data_graysensor.fps,      #数据有效标志位
         0x00])
 
     #数据包的长度
@@ -220,7 +224,7 @@ img_width = img_temp.width()
 img_height = img_temp.height()
 
 # Number of ROIs
-num_rois = 16
+num_rois = 8
 
 # ROI parameters
 roi_width = 5 * (img_width // 80)
@@ -230,16 +234,26 @@ roi_height = 8 * (img_height // 60)
 track_roi = []
 
 # Calculate the horizontal and vertical gaps between ROIs
-horizontal_gap = (img_width - (num_rois * roi_width)) // (num_rois - 1)
+horizontal_gap = (img_width - (16 * roi_width)) // (16 - 1)
 vertical_position = 40 * (img_height // 60)
+
+offset_roi = 16 - num_rois
+
+offset_fix_pix = 3
 
 # Generate the ROIs
 for i in range(num_rois):
-    roi_x = i * (roi_width + horizontal_gap)
+    roi_x = i * (roi_width + horizontal_gap) + offset_fix_pix
     roi_y = vertical_position
-    roi = (roi_x, roi_y, roi_width, roi_height)
+    roi = [roi_x, roi_y, roi_width, roi_height]
     track_roi.append(roi)
 
+
+if offset_roi != 0:
+    # Need Offset the ROI
+    for i in range(num_rois):
+        track_roi[i][0] += roi_width * (offset_roi // 2)
+print(track_roi)
 #mid1, mid2 = track_roi[7], track_roi[8]
 #tar_roi = ((mid1[0] + mid2[0]) // 2, vertical_position + roi_height, roi_width, roi_height)
 # -------------------- 结束ROI生成--------------------------
@@ -275,21 +289,28 @@ def findtrack():   # 16路循迹任务
     if find_cross(img): target_data_graysensor.cross = 1
 
     # 寻找巡线
-    for i in range(0,16):
+    for i in range(0,num_rois):
         hor_bits[i]=0
+        print(track_roi[i])
         blobs=img.find_blobs([thresholds],roi=track_roi[i],merge=True,margin=10)  # 寻找色块
         for b in blobs:
             hor_bits[i]=1
 
     target_data_graysensor.flag = 1   # 识别成功标志位
-    for k in range(0,16):
+    for k in range(0,num_rois):
         if  hor_bits[k]:
             target_data_graysensor.x=target_data_graysensor.x|(0x01<<(15-k))  # 移动15位就为：1000 0000 0000 0000
             img.draw_circle(int(track_roi[k][0]+track_roi[k][2]*0.5),int(track_roi[k][1]+track_roi[k][3]*0.5),1,(255,0,0))
-    for rec in track_roi:
+
+    for iii in range(num_rois):
+        rec = track_roi[iii]
         img.draw_rectangle(rec, color=(0,0,255))#绘制出roi区域
 
+
     print(target_data_graysensor.x)
+    lcd.display(img, x_scale=1.45, y_scale=1.45)
+
+cross_range_x = 20
 
 # -------------- Find T And Shi -----------------------
 def find_cross(sensor_img) -> bool:
@@ -298,9 +319,10 @@ def find_cross(sensor_img) -> bool:
                               roi=(32,0,15,15))
         if r:
             sensor_img.draw_rectangle(r)
+
             x_m = r[0] + r[2] // 2
             y_m = r[1] + r[3] // 2
-            if (x_m in range(36, 36 + 7)) and (y_m in range(2, 2 + 4)):
+            if (x_m in range(img_width // 2 - cross_range_x // 2, img_width // 2 + cross_range_x // 2)) and (y_m in range(2, 2 + 4)):
 #                print(True)
                 return True
 #            print(i + 1, r) #打印模板名字
@@ -310,6 +332,7 @@ def find_cross(sensor_img) -> bool:
 # -------------------------------- 读取模板信息 -------------------
 def intrack_number_recognition():  # 途中数字识别任务
     img = sensor.snapshot()
+    lcd.display(img, x_scale=1.45, y_scale=1.45)
     target_data_needtodo.x = 0b000  # 无效
     for i, n_feat in enumerate(temp_feats):
         if TARGET_NUM != 0 and i != TARGET_NUM: continue
@@ -318,6 +341,7 @@ def intrack_number_recognition():  # 途中数字识别任务
                                   roi=(0,0,80,40))
             if r:
                 img.draw_rectangle(r)
+                lcd.display(img, x_scale=1.45, y_scale=1.45)
                 n_xpoi = r[0] + (r[2] // 2)
                 if n_xpoi < 40:
                     target_data_needtodo.x = 0b100
@@ -328,18 +352,22 @@ def intrack_number_recognition():  # 途中数字识别任务
 
 def inbegin_number_recognition():  # 起初数字识别任务
     img = sensor.snapshot()
+    lcd.display(img, x_scale=1.45, y_scale=1.45)
     target_data_begin.flag = 0b0
     for i, t in enumerate(begin_feats):
         r = img.find_template(t, 0.65, step=1,search=SEARCH_EX)
+
         if r:
             n_time = time.time()
             img.draw_rectangle(r)
+            lcd.display(img, x_scale=1.45, y_scale=1.45)
             while(True):
                 img = sensor.snapshot()
                 r = img.find_template(t, 0.65, step=1,search=SEARCH_EX)
                 if not r: break
                 img.draw_rectangle(r)
-                if time.time() - n_time > 1:
+                lcd.display(img, x_scale=1.45, y_scale=1.45)
+                if time.time() - n_time > 0.5:
                     print(True)
                     target_data_begin.flag = 0b1    # 成功读取
                     TARGET_NUM = i + 1
@@ -348,7 +376,7 @@ def inbegin_number_recognition():  # 起初数字识别任务
 
 # ------------------------------------------主程序------------------------------------------
 
-task_ctrl.task = task_type.Number_recognition_inbegin_task
+task_ctrl.task = task_type.Tracking_task
 
 while True:
     clock.tick()
