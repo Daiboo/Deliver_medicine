@@ -201,6 +201,21 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 			// switch(target->x)
 			// {
 
+				case 0b00000001:gray_status[1]=-7;	vision_status_worse/=2;break;			// 0000 0001							//0000-0000-0001-0000b
+				case 0b00000011:gray_status[1]=-6;	vision_status_worse/=2;break;			// 0000 0011					//0000-0000-0011-0000b
+				case 0b00000010:gray_status[1]=-5;	vision_status_worse/=2;break;			// 0000 0010					//0000-0000-0010-0000b
+				case 0b00000110:gray_status[1]=-4;	vision_status_worse/=2;break;			// 0000 0110					//0000-0000-0110-0000b
+				case 0b00000100:gray_status[1]=-3;	vision_status_worse/=2;break;			// 0000-0100						//0000-0000-0100-0000b
+				case 0b00001100:gray_status[1]=-2;  vision_status_worse/=2;break;			// 0000-1100							//0000-0000-1100-0000b
+				case 0b00001000:gray_status[1]=-1;  vision_status_worse/=2;break;			// 0000-1000							//0000-0000-1000-0000b
+				case 0b00011000:gray_status[1]=0;	vision_status_worse/=2;break;			// 0001-1000						//0000-0001-1000-0000b
+				case 0b00010000:gray_status[1]=1;	vision_status_worse/=2;break;			// 0001-0000						//0000-0001-0000-0000b
+				case 0b00110000:gray_status[1]=2;	vision_status_worse/=2;break;			// 0011-0000						//0000-0011-0000-0000b
+				case 0b00100000:gray_status[1]=3;	vision_status_worse/=2;break;			// 0010-0000						//0000-0010-0000-0000b
+				case 0b01100000:gray_status[1]=4;	vision_status_worse/=2;break;			// 0110-0000							//0000-0110-0000-0000b
+				case 0b01000000:gray_status[1]=5;	vision_status_worse/=2;break;			// 0100-0000					//0000-0100-0000-0000b
+				case 0b11000000:gray_status[1]=6;	vision_status_worse/=2;break;			// 1100-0000					//0000-1100-0000-0000b
+				case 0b10000000:gray_status[1]=7;	vision_status_worse/=2;break;			// 1000-0000					//0000-1000-0000-0000b
 
 
 			// 	case 0x0010:gray_status[1]=-7;	vision_status_worse/=2;break;				// 		0000 					//0000-0000-0001-0000b
