@@ -197,6 +197,7 @@ void deliver_medicine_task(void)
 		if(camera1.inbegin_recognition_finsh_flag)
 		{
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
+			// flight_subtask_cnt[n] = clockwise_rotate_90_task_state;  // 下一状态：右转90度
 			SDK_DT_Send_Check(Tracking_task);  // 发送循迹任务给openmv
 			camera1.inbegin_recognition_finsh_flag = 0;
 		}
@@ -221,6 +222,7 @@ void deliver_medicine_task(void)
 // ------------------------------- 状态：循迹控制，直到识别到十字或停止位--------------------------------------
 	else if(flight_subtask_cnt[n] == tracking_control_until_recognition_cross_or_stop) // 状态：循迹控制 直到识别到十字
 	{
+
 		speed_ctrl_mode=1;  //速度控制方式为两轮单独控制
 		vision_turn_control_50hz(&turn_ctrl_pwm);
 		speed_setup = __deliver_medicine_task_param.speed;
@@ -228,10 +230,11 @@ void deliver_medicine_task(void)
 		speed_expect[1] = speed_setup-turn_ctrl_pwm*turn_scale;//右边轮子速度期望
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);
+		SDK_DT_Send_Check(Tracking_task);  // 发送循迹任务给openmv
 
 		if(camera1.cross == 1)   // 如果检测到十字
 		{	
-
+			// camera1.cross = 0;
 			SDK_DT_Send_Check(Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
 
 			flight_subtask_cnt[n] = speed0_control_until_receive_todo;
@@ -272,6 +275,7 @@ void deliver_medicine_task(void)
 			beep.light_on_percent = 0.5f;
 			beep.reset = 1;
 			beep.times = 3;
+
 		}
 		else if(camera1.intrack_todo_task == 1)  // 001 右转
 		{
@@ -282,13 +286,13 @@ void deliver_medicine_task(void)
 			beep.reset = 1;
 			beep.times = 3;
 		}
-		else
-		{
-			beep.period = 1000;
-			beep.light_on_percent = 1.0f;
-			beep.reset = 1;
-			beep.times = 1;
-		}
+		// else
+		// {
+		// 	beep.period = 1000;
+		// 	beep.light_on_percent = 1.0f;
+		// 	beep.reset = 1;
+		// 	beep.times = 1;
+		// }
 	}
 
 
@@ -341,7 +345,6 @@ void deliver_medicine_task(void)
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);
 	}
-
 	else if(flight_subtask_cnt[n] == contrarotate_90_task_state + 3)  // 状态：转向控制，直到满足
 	{
 			trackless_output.yaw_ctrl_mode=ANTI_CLOCKWISE;
@@ -360,7 +363,6 @@ void deliver_medicine_task(void)
 				flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop; 	// 下一状态：
 			}
 	}
-
 
 // ------------------------------------右转状态机---------------------------------------
 	else if(flight_subtask_cnt[n] == clockwise_rotate_90_task_state)
@@ -410,8 +412,7 @@ void deliver_medicine_task(void)
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);
 	}
-
-	else if(flight_subtask_cnt[n] == contrarotate_90_task_state + 3)  // 状态：转向控制，直到满足
+	else if(flight_subtask_cnt[n] == clockwise_rotate_90_task_state + 3)  // 状态：转向控制，直到满足
 	{
 		trackless_output.yaw_ctrl_mode=CLOCKWISE;
 		trackless_output.yaw_outer_control_output  = 0;  // 偏航姿态控制器输入
