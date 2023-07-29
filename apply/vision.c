@@ -187,9 +187,19 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 				target->trust_flag_tracking_or_cross = 0;
 			}	
 
+			int total_gray_bit = 8;
+
+			// for (int i = 1; i <= 8; i++) {
+			// 	if (target->x == 1 << i) {
+			// 		gray_status[1]=i - (total_gray_bit / 2);
+			// 		vision_status_worse/=2;
+			// 		break;	
+			// 	}
+			// 	gray_status_backup[1][0];vision_status_worse++;
+			// }
 			
-			switch(target->x)
-			{
+			// switch(target->x)
+			// {
 
 				case 0b00000001:gray_status[1]=-7;	vision_status_worse/=2;break;			// 0000 0001							//0000-0000-0001-0000b
 				case 0b00000011:gray_status[1]=-6;	vision_status_worse/=2;break;			// 0000 0011					//0000-0000-0011-0000b
@@ -207,13 +217,30 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 				case 0b11000000:gray_status[1]=6;	vision_status_worse/=2;break;			// 1100-0000					//0000-1100-0000-0000b
 				case 0b10000000:gray_status[1]=7;	vision_status_worse/=2;break;			// 1000-0000					//0000-1000-0000-0000b
 
-				case 0x0000:gray_status[1]=gray_status_backup[1][0];vision_status_worse++;break;  //0000-0000-0000-0000b
-				default:
-				{
-					gray_status[1]=gray_status_backup[1][0];
-					vision_status_worse++;
-				}							
-			}
+
+			// 	case 0x0010:gray_status[1]=-7;	vision_status_worse/=2;break;				// 		0000 					//0000-0000-0001-0000b
+			// 	case 0x0030:gray_status[1]=-6;	vision_status_worse/=2;break;											//0000-0000-0011-0000b
+			// 	case 0x0020:gray_status[1]=-5;	vision_status_worse/=2;break;											//0000-0000-0010-0000b
+			// 	case 0x0060:gray_status[1]=-4;	vision_status_worse/=2;break;											//0000-0000-0110-0000b
+			// 	case 0x0040:gray_status[1]=-3;	vision_status_worse/=2;break;											//0000-0000-0100-0000b
+			// 	case 0x00C0:gray_status[1]=-2;  vision_status_worse/=2;break;											//0000-0000-1100-0000b
+			// 	case 0x0080:gray_status[1]=-1;  vision_status_worse/=2;break;											//0000-0000-1000-0000b
+			// 	case 0x0180:gray_status[1]=0;	vision_status_worse/=2;break;											//0000-0001-1000-0000b
+			// 	case 0x0100:gray_status[1]=1;	vision_status_worse/=2;break;											//0000-0001-0000-0000b
+			// 	case 0x0300:gray_status[1]=2;	vision_status_worse/=2;break;											//0000-0011-0000-0000b
+			// 	case 0x0200:gray_status[1]=3;	vision_status_worse/=2;break;											//0000-0010-0000-0000b
+			// 	case 0x0600:gray_status[1]=4;	vision_status_worse/=2;break;											//0000-0110-0000-0000b
+			// 	case 0x0400:gray_status[1]=5;	vision_status_worse/=2;break;											//0000-0100-0000-0000b
+			// 	case 0x0C00:gray_status[1]=6;	vision_status_worse/=2;break;											//0000-1100-0000-0000b
+			// 	case 0x0800:gray_status[1]=7;	vision_status_worse/=2;break;											//0000-1000-0000-0000b
+
+			// 	case 0x0000:gray_status[1]=gray_status_backup[1][0];vision_status_worse++;break;  //0000-0000-0000-0000b
+			// 	default:
+			// 	{
+			// 		gray_status[1]=gray_status_backup[1][0];
+			// 		vision_status_worse++;
+			// 	}							
+			// }
 		}
 		case Number_recognition_inbegin_task:
 		{
