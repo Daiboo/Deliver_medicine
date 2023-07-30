@@ -17,12 +17,14 @@ void gpio_input_check_channel_12_with_handle(void);
 
 
 extern float gray_status[2],gray_status_backup[2][20];
+extern float rho_status[2],rho_status_backup[2][20];
 
 extern float turn_scale,turn_output;
+extern float rho_output,rho_output_last;
 extern uint32_t gray_status_worse,vision_status_worse;
 
 
-extern controller seektrack_ctrl[2];
+extern controller seektrack_ctrl[3];
 extern float startpoint_straightaway_cm;
 
 #endif

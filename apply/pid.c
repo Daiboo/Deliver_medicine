@@ -5,7 +5,7 @@
 
 
 /***************************************************
-º¯ÊýÃû: void pid_control_init(controller *ctrl,
+å‡½æ•°å: void pid_control_init(controller *ctrl,
 															float kp,
 															float ki,
 															float kd,
@@ -16,20 +16,20 @@
 															uint8_t integral_separate_flag,
 															float integral_separate_limit,
 															uint8_t dis_error_gap_cnt)
-ËµÃ÷:	pid¿ØÖÆÆ÷³õÊ¼»¯
-Èë¿Ú:	controller *ctrl-´ý³õÊ¼»¯¿ØÖÆÆ÷½á¹¹Ìå
-			float kp-±ÈÀý²ÎÊý
-			float ki-»ý·Ö²ÎÊý
-			float kd-Î¢·Ö²ÎÊý
-			float err_max-Æ«²îÏÞ·ùÖµ
-			float integral_max-»ý·ÖÏÞ·ùÖµ
-			float output_max-Êä³öÏÞ·ùÖµ
-			uint8_t err_limit_flag-Æ«²îÏÞ·ù±êÖ¾Î»
-			uint8_t integral_separate_flag-»ý·Ö·ÖÀë±êÖ¾Î»
-			float integral_separate_limit-»ý·Ö·ÖÀëÏÞ·ù±êÖ¾Î»
-			uint8_t dis_error_gap_cnt-¼ÆËãÎ¢·ÖÊ±µÄ¼ä¸ô´ÎÊý
-³ö¿Ú:	ÎÞ
-±¸×¢:	ÎÞ
+è¯´æ˜Ž:	pidæŽ§åˆ¶å™¨åˆå§‹åŒ–
+å…¥å£:	controller *ctrl-å¾…åˆå§‹åŒ–æŽ§åˆ¶å™¨ç»“æž„ä½“
+			float kp-æ¯”ä¾‹å‚æ•°
+			float ki-ç§¯åˆ†å‚æ•°
+			float kd-å¾®åˆ†å‚æ•°
+			float err_max-åå·®é™å¹…å€¼
+			float integral_max-ç§¯åˆ†é™å¹…å€¼
+			float output_max-è¾“å‡ºé™å¹…å€¼
+			uint8_t err_limit_flag-åå·®é™å¹…æ ‡å¿—ä½
+			uint8_t integral_separate_flag-ç§¯åˆ†åˆ†ç¦»æ ‡å¿—ä½
+			float integral_separate_limit-ç§¯åˆ†åˆ†ç¦»é™å¹…æ ‡å¿—ä½
+			uint8_t dis_error_gap_cnt-è®¡ç®—å¾®åˆ†æ—¶çš„é—´éš”æ¬¡æ•°
+å‡ºå£:	æ— 
+å¤‡æ³¨:	æ— 
 ****************************************************/
 void pid_control_init(controller *ctrl,
 											float kp,
@@ -60,54 +60,54 @@ void pid_control_init(controller *ctrl,
 
 void  pid_integrate_reset(controller *ctrl)  {ctrl->integral=0.0f;}
 /***************************************************
-º¯ÊýÃû: float pid_control_run(controller *ctrl)
-ËµÃ÷:	pid¿ØÖÆÆ÷ÔËÐÐ
-Èë¿Ú:	controller *ctrl-¿ØÖÆÆ÷½á¹¹Ìå
-³ö¿Ú:	ÎÞ
-±¸×¢:	ÎÞ
+å‡½æ•°å: float pid_control_run(controller *ctrl)
+è¯´æ˜Ž:	pidæŽ§åˆ¶å™¨è¿è¡Œ
+å…¥å£:	controller *ctrl-æŽ§åˆ¶å™¨ç»“æž„ä½“
+å‡ºå£:	æ— 
+å¤‡æ³¨:	æ— 
 ****************************************************/
 float pid_control_run(controller *ctrl)
 {
-  /*******Æ«²î¼ÆËã*********************/
+  /*******åå·®è®¡ç®—*********************/
 	for(uint16_t i=19;i>0;i--)
 	{
 		ctrl->error_backup[i]=ctrl->error_backup[i-1];
 	}
 	ctrl->error_backup[0]=ctrl->error;
 	
-  ctrl->last_error=ctrl->error;//±£´æÉÏ´ÎÆ«²î
-  ctrl->error=ctrl->expect-ctrl->feedback;//ÆÚÍû¼õÈ¥·´À¡µÃµ½Æ«²î
-	ctrl->dis_error=ctrl->error-ctrl->error_backup[ctrl->dis_error_gap_cnt-1];//Î¢·Ö		ctrl->dis_error=ctrl->error-ctrl->last_error;//Ô­Ê¼Î¢·Ö
+  ctrl->last_error=ctrl->error;//ä¿å­˜ä¸Šæ¬¡åå·®
+  ctrl->error=ctrl->expect-ctrl->feedback;//æœŸæœ›å‡åŽ»åé¦ˆå¾—åˆ°åå·®
+	ctrl->dis_error=ctrl->error-ctrl->error_backup[ctrl->dis_error_gap_cnt-1];//å¾®åˆ†		ctrl->dis_error=ctrl->error-ctrl->last_error;//åŽŸå§‹å¾®åˆ†
 	
-  if(ctrl->error_limit_flag==1)//Æ«²îÏÞ·ù¶È±êÖ¾Î»
+  if(ctrl->error_limit_flag==1)//åå·®é™å¹…åº¦æ ‡å¿—ä½
   {
     if(ctrl->error>= ctrl->error_limit_max)  ctrl->error= ctrl->error_limit_max;
     if(ctrl->error<=-ctrl->error_limit_max)  ctrl->error=-ctrl->error_limit_max;
   }
-  /*******»ý·Ö¼ÆËã*********************/
-  if(ctrl->integral_separate_flag==1)//»ý·Ö·ÖÀë±êÖ¾Î»
+  /*******ç§¯åˆ†è®¡ç®—*********************/
+  if(ctrl->integral_separate_flag==1)//ç§¯åˆ†åˆ†ç¦»æ ‡å¿—ä½
   {
-		//Ö»ÔÚÆ«²î±È½ÏÐ¡µÄÊ±ºòÒýÈë»ý·Ö¿ØÖÆ
+		//åªåœ¨åå·®æ¯”è¾ƒå°çš„æ—¶å€™å¼•å…¥ç§¯åˆ†æŽ§åˆ¶
     if(ABS(ctrl->error)<=ctrl->integral_separate_limit)	 ctrl->integral+=ctrl->ki*ctrl->error;
   }
   else
   {
     ctrl->integral+=ctrl->ki*ctrl->error;
   }
-	/*******»ý·ÖÏÞ·ù*********************/
+	/*******ç§¯åˆ†é™å¹…*********************/
 	if(ctrl->integral>=ctrl->integral_limit_max)   ctrl->integral=ctrl->integral_limit_max;
 	if(ctrl->integral<=-ctrl->integral_limit_max)  ctrl->integral=-ctrl->integral_limit_max;
 	
-	/*******×ÜÊä³ö¼ÆËã*********************/
-  ctrl->last_output=ctrl->output;//Êä³öÖµµÝÍÆ
-  ctrl->output=ctrl->kp*ctrl->error//±ÈÀý
-							+ctrl->integral//»ý·Ö
-							+ctrl->kd*ctrl->dis_error;//Î¢·Ö
+	/*******æ€»è¾“å‡ºè®¡ç®—*********************/
+  ctrl->last_output=ctrl->output;//è¾“å‡ºå€¼é€’æŽ¨
+  ctrl->output=ctrl->kp*ctrl->error//æ¯”ä¾‹
+							+ctrl->integral//ç§¯åˆ†
+							+ctrl->kd*ctrl->dis_error;//å¾®åˆ†
 	
-	/*******×ÜÊä³öÏÞ·ù*********************/
+	/*******æ€»è¾“å‡ºé™å¹…*********************/
   if(ctrl->output>= ctrl->output_limit_max)  ctrl->output= ctrl->output_limit_max;
   if(ctrl->output<=-ctrl->output_limit_max)  ctrl->output=-ctrl->output_limit_max;
-  /*******·µ»Ø×ÜÊä³ö*********************/
+  /*******è¿”å›žæ€»è¾“å‡º*********************/
   return ctrl->output;
 }
 
@@ -121,48 +121,48 @@ float pid_control_dt_run(controller *ctrl,float dt)
 	if(_dt>1.05f*dt||_dt<0.95f*dt||isnan(_dt)!=0)   _dt=dt;
 	if(_dt<0.0001f) return 0;
 
-  /*******Æ«²î¼ÆËã*********************/
+  /*******åå·®è®¡ç®—*********************/
 	for(uint16_t i=19;i>0;i--)
 	{
 		ctrl->error_backup[i]=ctrl->error_backup[i-1];
 	}
 	ctrl->error_backup[0]=ctrl->error;
 	
-  ctrl->last_error=ctrl->error;//±£´æÉÏ´ÎÆ«²î
-  ctrl->error=ctrl->expect-ctrl->feedback;//ÆÚÍû¼õÈ¥·´À¡µÃµ½Æ«²î
-	ctrl->dis_error=ctrl->error-ctrl->error_backup[ctrl->dis_error_gap_cnt-1];//Î¢·Ö		ctrl->dis_error=ctrl->error-ctrl->last_error;//Ô­Ê¼Î¢·Ö
+  ctrl->last_error=ctrl->error;//ä¿å­˜ä¸Šæ¬¡åå·®
+  ctrl->error=ctrl->expect-ctrl->feedback;//æœŸæœ›å‡åŽ»åé¦ˆå¾—åˆ°åå·®
+	ctrl->dis_error=ctrl->error-ctrl->error_backup[ctrl->dis_error_gap_cnt-1];//å¾®åˆ†		ctrl->dis_error=ctrl->error-ctrl->last_error;//åŽŸå§‹å¾®åˆ†
 
-  if(ctrl->error_limit_flag==1)//Æ«²îÏÞ·ù¶È±êÖ¾Î»
+  if(ctrl->error_limit_flag==1)//åå·®é™å¹…åº¦æ ‡å¿—ä½
   {
     if(ctrl->error>= ctrl->error_limit_max)  ctrl->error= ctrl->error_limit_max;
     if(ctrl->error<=-ctrl->error_limit_max)  ctrl->error=-ctrl->error_limit_max;
   }
-  /*******»ý·Ö¼ÆËã*********************/
-  if(ctrl->integral_separate_flag==1)//»ý·Ö·ÖÀë±êÖ¾Î»
+  /*******ç§¯åˆ†è®¡ç®—*********************/
+  if(ctrl->integral_separate_flag==1)//ç§¯åˆ†åˆ†ç¦»æ ‡å¿—ä½
   {
-		//Ö»ÔÚÆ«²î±È½ÏÐ¡µÄÊ±ºòÒýÈë»ý·Ö¿ØÖÆ
+		//åªåœ¨åå·®æ¯”è¾ƒå°çš„æ—¶å€™å¼•å…¥ç§¯åˆ†æŽ§åˆ¶
     if(ABS(ctrl->error)<=ctrl->integral_separate_limit)	 ctrl->integral+=ctrl->ki*ctrl->error*_dt;
   }
   else
   {
     ctrl->integral+=ctrl->ki*ctrl->error*_dt;
   }
-	/*******»ý·ÖÏÞ·ù*********************/
+	/*******ç§¯åˆ†é™å¹…*********************/
 	if(ctrl->integral>=ctrl->integral_limit_max)   ctrl->integral=ctrl->integral_limit_max;
 	if(ctrl->integral<=-ctrl->integral_limit_max)  ctrl->integral=-ctrl->integral_limit_max;
 	
 	ctrl->dis_error_lpf=LPButterworth(ctrl->dis_error,&ctrl->lpf_buffer,&ctrl->lpf_params);
 		
-	/*******×ÜÊä³ö¼ÆËã*********************/
-  ctrl->last_output=ctrl->output;//Êä³öÖµµÝÍÆ
-  ctrl->output=ctrl->kp*ctrl->error//±ÈÀý
-							+ctrl->integral//»ý·Ö
-							+ctrl->kd*ctrl->dis_error_lpf;//Î¢·Ö
+	/*******æ€»è¾“å‡ºè®¡ç®—*********************/
+  ctrl->last_output=ctrl->output;//è¾“å‡ºå€¼é€’æŽ¨
+  ctrl->output=ctrl->kp*ctrl->error//æ¯”ä¾‹
+							+ctrl->integral//ç§¯åˆ†
+							+ctrl->kd*ctrl->dis_error_lpf;//å¾®åˆ†
 	
-	/*******×ÜÊä³öÏÞ·ù*********************/
+	/*******æ€»è¾“å‡ºé™å¹…*********************/
   if(ctrl->output>= ctrl->output_limit_max)  ctrl->output= ctrl->output_limit_max;
   if(ctrl->output<=-ctrl->output_limit_max)  ctrl->output=-ctrl->output_limit_max;
-  /*******·µ»Ø×ÜÊä³ö*********************/
+  /*******è¿”å›žæ€»è¾“å‡º*********************/
   return ctrl->output;
 }
 
@@ -175,51 +175,51 @@ float pid_control_dt_yaw_run(controller *ctrl,float dt)
 	if(_dt>1.05f*dt||_dt<0.95f*dt||isnan(_dt)!=0)   _dt=dt;
 	if(_dt<0.0001f) return 0;
 	
-  /*******Æ«²î¼ÆËã*********************/
+  /*******åå·®è®¡ç®—*********************/
 	for(uint16_t i=19;i>0;i--)
 	{
 		ctrl->error_backup[i]=ctrl->error_backup[i-1];
 	}
 	ctrl->error_backup[0]=ctrl->error;
 	
-  ctrl->last_error=ctrl->error;//±£´æÉÏ´ÎÆ«²î
-  ctrl->error=ctrl->expect-ctrl->feedback;//ÆÚÍû¼õÈ¥·´À¡µÃµ½Æ«²î
-	ctrl->dis_error=ctrl->error-ctrl->error_backup[ctrl->dis_error_gap_cnt-1];//Î¢·Ö		ctrl->dis_error=ctrl->error-ctrl->last_error;//Ô­Ê¼Î¢·Ö
+  ctrl->last_error=ctrl->error;//ä¿å­˜ä¸Šæ¬¡åå·®
+  ctrl->error=ctrl->expect-ctrl->feedback;//æœŸæœ›å‡åŽ»åé¦ˆå¾—åˆ°åå·®
+	ctrl->dis_error=ctrl->error-ctrl->error_backup[ctrl->dis_error_gap_cnt-1];//å¾®åˆ†		ctrl->dis_error=ctrl->error-ctrl->last_error;//åŽŸå§‹å¾®åˆ†
 
-  /***********************Æ«º½½ÇÆ«²î³¬¹ý+-180´¦Àí*****************************/
+  /***********************åèˆªè§’åå·®è¶…è¿‡+-180å¤„ç†*****************************/
 	if(ctrl->error<-180) ctrl->error=ctrl->error+360;
 	if(ctrl->error>180)  ctrl->error=ctrl->error-360;
 
 	
-  if(ctrl->error_limit_flag==1)//Æ«²îÏÞ·ù¶È±êÖ¾Î»
+  if(ctrl->error_limit_flag==1)//åå·®é™å¹…åº¦æ ‡å¿—ä½
   {
     if(ctrl->error>= ctrl->error_limit_max)  ctrl->error= ctrl->error_limit_max;
     if(ctrl->error<=-ctrl->error_limit_max)  ctrl->error=-ctrl->error_limit_max;
   }
-  /*******»ý·Ö¼ÆËã*********************/
-  if(ctrl->integral_separate_flag==1)//»ý·Ö·ÖÀë±êÖ¾Î»
+  /*******ç§¯åˆ†è®¡ç®—*********************/
+  if(ctrl->integral_separate_flag==1)//ç§¯åˆ†åˆ†ç¦»æ ‡å¿—ä½
   {
-		//Ö»ÔÚÆ«²î±È½ÏÐ¡µÄÊ±ºòÒýÈë»ý·Ö¿ØÖÆ
+		//åªåœ¨åå·®æ¯”è¾ƒå°çš„æ—¶å€™å¼•å…¥ç§¯åˆ†æŽ§åˆ¶
     if(ABS(ctrl->error)<=ctrl->integral_separate_limit)	 ctrl->integral+=ctrl->ki*ctrl->error*_dt;
   }
   else
   {
     ctrl->integral+=ctrl->ki*ctrl->error*_dt;
   }
-	/*******»ý·ÖÏÞ·ù*********************/
+	/*******ç§¯åˆ†é™å¹…*********************/
 	if(ctrl->integral>=ctrl->integral_limit_max)   ctrl->integral=ctrl->integral_limit_max;
 	if(ctrl->integral<=-ctrl->integral_limit_max)  ctrl->integral=-ctrl->integral_limit_max;
 	
-	/*******×ÜÊä³ö¼ÆËã*********************/
-  ctrl->last_output=ctrl->output;//Êä³öÖµµÝÍÆ
-  ctrl->output=ctrl->kp*ctrl->error//±ÈÀý
-							+ctrl->integral//»ý·Ö
-							+ctrl->kd*ctrl->dis_error;//Î¢·Ö
+	/*******æ€»è¾“å‡ºè®¡ç®—*********************/
+  ctrl->last_output=ctrl->output;//è¾“å‡ºå€¼é€’æŽ¨
+  ctrl->output=ctrl->kp*ctrl->error//æ¯”ä¾‹
+							+ctrl->integral//ç§¯åˆ†
+							+ctrl->kd*ctrl->dis_error;//å¾®åˆ†
 	
-	/*******×ÜÊä³öÏÞ·ù*********************/
+	/*******æ€»è¾“å‡ºé™å¹…*********************/
   if(ctrl->output>= ctrl->output_limit_max)  ctrl->output= ctrl->output_limit_max;
   if(ctrl->output<=-ctrl->output_limit_max)  ctrl->output=-ctrl->output_limit_max;
-  /*******·µ»Ø×ÜÊä³ö*********************/
+  /*******è¿”å›žæ€»è¾“å‡º*********************/
   return ctrl->output;
 }
 

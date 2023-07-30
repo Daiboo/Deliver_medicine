@@ -52,6 +52,17 @@ void sdk_duty_run(void)
 		{
 			deliver_medicine_task();
 		}
+		case 99:
+		{
+			// SDK_DT_Send_Check(Tracking_task);
+			speed_ctrl_mode=1;  //速度控制方式为两轮单独控制
+			vision_turn_control_50hz(&turn_ctrl_pwm);
+			speed_setup = __deliver_medicine_task_param.speed;
+			speed_expect[0] = speed_setup-turn_ctrl_pwm*turn_scale;//左边轮子速度期望
+			speed_expect[1] = speed_setup+turn_ctrl_pwm*turn_scale;//右边轮子速度期望
+			//速度控制
+			speed_control_100hz(speed_ctrl_mode);
+		}
 
 //		case 0://遥控控制模式
 //		{
