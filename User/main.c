@@ -4,27 +4,27 @@
 int main()
 {
 	System_Init();  // 系统时钟初始化
-	EEPROM_Init();					//EEPROM初始化
+	EEPROM_Init();	//EEPROM初始化
 	OLED_Init();
 	ADC_Init();      // 采集电压
 
-	I2C1_Init();     //I2C1初始化:ICM20608,SPL06
+	I2C1_Init();     // I2C1初始化:ICM20608,SPL06
 	rgb_init();
 	Buzzer_Init();    // 初始化蜂鸣器和对外输出电源控制io
 	
 
 	
 	ctrl_params_init();			//控制参数初始化	
-	trackless_params_init();//硬件配置初始化
+	trackless_params_init();	//硬件配置初始化
 	
 	
 	
 	PWM0_Init();  // PWM0初始化M0P0、M0P1、M0P2、M0P3
 	PWM1_Init();  // PWM1初始化M1P0、M1P1、M1P2、M1P3
 
-	rangefinder_init();			//测距传感器串口
+	rangefinder_init();			// 测距传感器串口
 	UART3_Init(115200);  		// 树莓派通信串口
-	UART7_Init(256000);			//OPENMV视觉串口初始化
+	UART7_Init(256000);			// OPENMV视觉串口初始化
 	
 
 
@@ -37,9 +37,9 @@ int main()
 	Button_Init();					//板载按键初始化
 	NTimer_Init();
 	
-	page_number = 6;
+	page_number = 8;
 	// sdk_work_mode = Deliver_Medicine;
-	sdk_work_mode = 99;
+	sdk_work_mode = Car_Stop;
 	SDK_DT_Send_Check(Tracking_task);
 	while(1)
 	{
