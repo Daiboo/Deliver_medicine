@@ -39,7 +39,7 @@ int main()
 	
 	page_number = 6;
 	// sdk_work_mode = Deliver_Medicine;
-	sdk_work_mode = 99;
+	sdk_work_mode = Car_Stop;
 	SDK_DT_Send_Check(Tracking_task);
 	while(1)
 	{
