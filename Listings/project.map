@@ -624,7 +624,10 @@ Section Cross References
     raspi_undercontrol.o(i.Car_Status_Tick) refers to rgb.o(i.bling_set) for bling_set
     raspi_undercontrol.o(i.Car_Status_Tick) refers to rgb.o(.data) for light_red
     raspi_undercontrol.o(i.Float2Byte) refers to raspi_undercontrol.o(.data) for FloatUnion
+<<<<<<< HEAD
+=======
     raspi_undercontrol.o(i.Raspi_Ctrl_Instruction_Dispatch) refers to subtask.o(i.subtask_thread_reset) for subtask_thread_reset
+>>>>>>> 4c03546243cf58fe00fec9019bf2dd30a37760d0
     raspi_undercontrol.o(i.Raspi_Ctrl_Instruction_Dispatch) refers to raspi_undercontrol.o(.bss) for raspi_ctrl_procedure
     raspi_undercontrol.o(i.Raspi_Ctrl_Instruction_Dispatch) refers to sdk.o(.bss) for trackless_output
     raspi_undercontrol.o(i.Raspi_Ctrl_Instruction_Dispatch) refers to develop_mode.o(.data) for sdk_work_mode
@@ -2305,6 +2308,12 @@ Removing Unused input sections from the image.
     Removing vision.o(i.Get_Camera_Wide_Angle), (136 bytes).
     Removing vision.o(i.SDK_DT_Reset), (16 bytes).
     Removing vision.o(i.Sensor_Parameter_Sort), (452 bytes).
+<<<<<<< HEAD
+    Removing raspi_undercontrol.o(i.Float2Byte), (100 bytes).
+    Removing raspi_undercontrol.o(i.Raspi_Ctrl_Instruction_Dispatch), (176 bytes).
+    Removing raspi_undercontrol.o(i.Serial_Data_Send), (18 bytes).
+    Removing raspi_undercontrol.o(i.Tidata_Tosend_Raspi), (76 bytes).
+=======
     Removing raspi_undercontrol.o(i.Byte2Float), (44 bytes).
     Removing raspi_undercontrol.o(i.Car_Status_Tick), (36 bytes).
     Removing raspi_undercontrol.o(i.Float2Byte), (100 bytes).
@@ -2314,6 +2323,7 @@ Removing Unused input sections from the image.
     Removing raspi_undercontrol.o(i.Serial_Data_Send), (18 bytes).
     Removing raspi_undercontrol.o(i.Tidata_Tosend_Raspi), (76 bytes).
     Removing raspi_undercontrol.o(.data), (15 bytes).
+>>>>>>> 4c03546243cf58fe00fec9019bf2dd30a37760d0
     Removing neeprom.o(i.WriteFlashParameter_Two), (60 bytes).
     Removing oled.o(i.IIC_Ack), (56 bytes).
     Removing oled.o(i.IIC_NAck), (56 bytes).
@@ -2401,7 +2411,6 @@ Removing Unused input sections from the image.
     Removing nuart.o(i.UART_SendByte), (104 bytes).
     Removing rgb.o(i.GPIO_ResetBits), (16 bytes).
     Removing rgb.o(i.GPIO_SetBits), (16 bytes).
-    Removing rgb.o(i.bling_set), (24 bytes).
     Removing rgb.o(i.rgb_start_bling), (84 bytes).
     Removing ultrasonic.o(i.hcsr04_statemachine), (208 bytes).
     Removing ultrasonic.o(i.rangefinder_statemachine), (64 bytes).
@@ -2436,6 +2445,9 @@ Removing Unused input sections from the image.
     Removing epi.o(i.EPIWorkaroundByteWrite), (12 bytes).
     Removing epi.o(i.EPIWorkaroundByteRead), (14 bytes).
 
+<<<<<<< HEAD
+956 unused section(s) (total 47974 bytes) removed from the image.
+=======
 <<<<<<< HEAD
 963 unused section(s) (total 49089 bytes) removed from the image.
 =======
@@ -4881,3 +4893,4 @@ Image component sizes
 
 ==============================================================================
 
+>>>>>>> 4c03546243cf58fe00fec9019bf2dd30a37760d0
