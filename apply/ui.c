@@ -797,11 +797,12 @@ void screen_display(void)
 		break;  
 		case 8:
 		{
+			Delay_Ms(20);
 			LCD_clear_L(0,0);	display_6_8_string(0,0,"Raspi_Ctrl");	display_6_8_number(115,0,page_number+1);
 				
 			LCD_clear_L(0,1);	display_6_8_string(0,1,"lpwm");			write_6_8_number_f1(45,1,raspi_ctrl_procedure.left_pwm);
 			LCD_clear_L(0,2);	display_6_8_string(0,2,"rpwm");			write_6_8_number_f1(45,2,raspi_ctrl_procedure.right_pwm);
-			LCD_clear_L(0,3);	
+
 		}
 		break;
 // 三十二页

@@ -104,21 +104,28 @@ void Raspi_Data_Phrase_Prepare_Lite(uint8_t data)
 
     if (state == 0 && data == Raspi_Head[0]) // 判断帧头1 0xFF
     {
+
         state = 1;
         Raspi_Receivebuf[0] = data;
     }
     else if (state == 1 && data == Raspi_Head[1]) // 判断帧头2 0xFC
     {
+
+
         state = 2;
         Raspi_Receivebuf[1] = data;
     }
     else if (state == 2 && data < 0XF1) // 功能字节，树莓派发送命令控制
     {
-        state = 2;
+        state = 3;
         Raspi_Receivebuf[2] = data;
+
+
     }
     else if (state == 3 && data < 100) // 有效数据长度
     {
+
+
         state = 4;
         Raspi_Receivebuf[3] = data;
         data_len = data; // 有效数据长度
@@ -159,7 +166,9 @@ Raspi_Ctrl_Procedure raspi_ctrl_procedure;
 
 void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派数据解析进程
 {
-    write_6_8_number_f1(10,3,1);
+
+
+
     uint8_t _cnt = 0;
     uint8_t sum = 0;
     for(uint8_t i=0;i<(num-3);i++)  sum ^= *(data_buf+i);    // 异或校验
@@ -213,8 +222,8 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
     {
         raspi_ctrl_procedure.left_pwm = *(data_buf + 4) << 8 | *(data_buf + 5);
         raspi_ctrl_procedure.right_pwm = *(data_buf + 6) << 8 | *(data_buf + 7);
-        write_6_8_number_f1(20,3,1);
-        Open_Loop_Motor_Output(raspi_ctrl_procedure.left_pwm, raspi_ctrl_procedure.right_pwm);
+        
+        
     }
     break;
     default:
