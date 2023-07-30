@@ -832,6 +832,7 @@ void screen_display(void)
 			else if(ver_choose==10)	display_6_8_string(40,6,"*");
 			else if(ver_choose==11)	display_6_8_string(60,6,"*");
 			else if(ver_choose==12)	display_6_8_string(90,6,"*");
+			
 			else display_6_8_string(80,ver_choose-2,"*");
 			
 			
