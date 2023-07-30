@@ -163,7 +163,7 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 	switch(target->task)
 	{
 
-		case Tracking_task:  // 视觉任务
+		case Tracking_task:  // 循迹任务
 		{
 			
 			target->x = *(data_buf+4);  // 发来的是前8位
@@ -193,36 +193,36 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 			rho_status[1] = target->rho;
 
 		}
-		case Number_recognition_inbegin_task:
-		{
+		// case Number_recognition_inbegin_task:
+		// {
 
-			target->inbegin_recognition_finsh_flag = *(data_buf+4);
+		// 	target->inbegin_recognition_finsh_flag = *(data_buf+4);
 			
-		}
-		break;
-		case Number_recognition_intrack_task:  
-		{
-			target->intrack_todo_task = *(data_buf+4);
+		// }
+		// break;
+		// case Number_recognition_intrack_task:  
+		// {
+		// 	target->intrack_todo_task = *(data_buf+4);
 
 
-			if(target->intrack_todo_task != 7)  
-			{
-				if(target->trust_cnt_number_recongition < 10)	 
-				{
-					target->trust_cnt_number_recongition++;
-					target->trust_flag_number_recongition = 0;
-				}
-				else target->trust_flag_number_recongition = 1;
-			}
-			else 
-			{
-				target->trust_cnt_number_recongition /= 2;
-				target->trust_flag_number_recongition = 0;
-			}
+		// 	if(target->intrack_todo_task != 7)  
+		// 	{
+		// 		if(target->trust_cnt_number_recongition < 10)	 
+		// 		{
+		// 			target->trust_cnt_number_recongition++;
+		// 			target->trust_flag_number_recongition = 0;
+		// 		}
+		// 		else target->trust_flag_number_recongition = 1;
+		// 	}
+		// 	else 
+		// 	{
+		// 		target->trust_cnt_number_recongition /= 2;
+		// 		target->trust_flag_number_recongition = 0;
+		// 	}
 
 			
-		}
-		break;
+		// }
+		// break;
 		default:  
 		{
 			target->target_ctrl_enable = 0;
