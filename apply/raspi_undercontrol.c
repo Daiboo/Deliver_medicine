@@ -248,7 +248,8 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
     // todo 解析来自树莓派任务数据
     case Raspi_Ctrl_Send_Instruction_toRaspi + Instruction_Base_Address:
     {
-        
+        camera1.inbegin_recognition_finsh_flag = *(data_buf + 4);
+
     }
     break;
     default:
