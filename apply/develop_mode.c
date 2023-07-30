@@ -52,6 +52,10 @@ void sdk_duty_run(void)
 		{
 			deliver_medicine_task();
 		}
+		case Car_Stop:
+		{
+			Open_Loop_Motor_Output(0,0);
+		}
 		case 99:
 		{
 			// SDK_DT_Send_Check(Tracking_task);

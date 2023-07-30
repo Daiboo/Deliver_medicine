@@ -12,6 +12,8 @@ typedef enum
     Speed_Control,
     Distance_Control,
     Deliver_Medicine,
+
+	Car_Stop,
 }Task_Type;
 
 // ----------------------------------------送药小车任务------------------------------------------
