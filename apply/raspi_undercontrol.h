@@ -41,6 +41,7 @@ extern Raspi_Ctrl_Procedure raspi_ctrl_procedure;
 
 void Raspi_Ctrl_Procedure_Init(void);
 void Raspi_Ctrl_Send_State(void);
+void Tidata_Tosend_Raspi(uint8_t mode);
 void Raspi_Ctrl_Instruction_Dispatch(void);
 void Raspi_Data_Phrase_Prepare_Lite(uint8_t data);
 void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf,uint8_t num);  //树莓派数据解析进程

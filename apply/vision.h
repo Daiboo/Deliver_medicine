@@ -55,7 +55,7 @@ typedef struct
 
 }Target_Check;//目标检测
 
-void SDK_DT_Send_Check(uint8_t mode);
+void Tidata_Tosend_OpenMV(uint8_t mode);
 
 void SDK_Data_Receive_Prepare_1(uint8_t data);
 void SDK_Data_Receive_Prepare_2(uint8_t data);
