@@ -13,11 +13,13 @@ union
 
 
 float gray_status[2]={0},gray_status_backup[2][20]={0};//灰度传感器状态与历史值
+float rho_status[2]={0},rho_status_backup[2][20] = {0}; // RHO 矫正
 float turn_output=0,turn_output_last=0;//控制器输出值
+float rho_output=0,rho_output_last=0;//控制器输出值
 float	turn_scale=turn_scale_default;//转向控制差速系数  0.15
 
 uint32_t gray_status_worse=0;	//灰度管异常状态计数器
-controller seektrack_ctrl[2];		//自主寻迹控制器结构体
+controller seektrack_ctrl[3];		//自主寻迹控制器结构体
 uint32_t vision_status_worse=0;
 
 
@@ -445,7 +447,7 @@ void gpio_input_check_from_vision(void)
 	}
 	gray_status_backup[1][0]=gray_status[1];
 
-	//gray_status[1]=camera1.sdk_target.x;
+	gray_status[1]=camera1.sdk_target.x;
 }
 
 
@@ -474,9 +476,21 @@ void vision_turn_control_50hz(float *output)
 	if(turn_output>0) turn_output+=0;
 	if(turn_output<0) turn_output-=0;
 	//输出限幅
-	turn_output=constrain_float(turn_output,-500,500);//转向控制输出限幅
+	turn_output=constrain_float(turn_output,-250,250);//转向控制输出限幅
+
+	// 添加rho方向的PID控制
+	seektrack_ctrl[2].expect = 0; // rho期望为0
+	seektrack_ctrl[2].feedback = rho_status[1]; // rho反馈
+	pid_control_run(&seektrack_ctrl[2]); // rho控制器运算
+	rho_output = seektrack_ctrl[2].output;
+
+	// rho输出限幅
+	rho_output = constrain_float(rho_output,-250,250);
+
+	// 求两轴控制的叠加和作为最终输出
+	*output = turn_output + rho_output;
 	
-	*output=turn_output;
+	// *output=turn_output;
 }
 
 

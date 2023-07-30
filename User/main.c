@@ -37,8 +37,9 @@ int main()
 	Button_Init();					//板载按键初始化
 	NTimer_Init();
 	
-	page_number = 8;
-	sdk_work_mode = Deliver_Medicine;
+	page_number = 6;
+	// sdk_work_mode = Deliver_Medicine;
+	sdk_work_mode = 99;
 	SDK_DT_Send_Check(Tracking_task);
 	while(1)
 	{
@@ -93,7 +94,7 @@ void duty_1000hz(void)
 //	{
 //		gpio_input_check_channel_12();//检测12路灰度灰度管状态
 //	}
-	gpio_input_check_from_vision();//openmv机器视觉信息获取
+	// gpio_input_check_from_vision();//openmv机器视觉信息获取
 	simulation_pwm_output();//模拟pwm输出
 }
 

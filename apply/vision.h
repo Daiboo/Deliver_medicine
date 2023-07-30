@@ -29,9 +29,10 @@ typedef union
 
 typedef struct
 {
-	uint16_t x;
+	int8_t x;
 	uint8_t flag;
 	uint8_t cross;
+	int8_t rho;
 	uint8_t fps;
 	uint8_t camera_id;
 	uint8_t task;   // 任务类别
