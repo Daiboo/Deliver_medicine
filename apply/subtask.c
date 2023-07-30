@@ -12,7 +12,16 @@ uint32_t execute_time_ms[SUBTASK_NUM]={0};//飞行任务子线执行时间，可
 uint32_t subtask_finish_flag[SUBTASK_NUM] = {0};  // 子任务完成flag
 
 
-
+/**
+ * @brief 指定子任务的子线程复位
+ * @param task 要指定复位的任务
+*/
+void subtask_thread_reset(Task_Type task)
+{
+	flight_subtask_cnt[task] = 0;
+	flight_global_cnt[task] = 0;
+	subtask_finish_flag[task] = 0;
+}
 
 
 void subtask_reset(void)

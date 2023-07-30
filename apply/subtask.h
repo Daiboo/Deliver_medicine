@@ -38,7 +38,7 @@ extern Deliver_medicine_task_param __deliver_medicine_task_param;
 
 
 void subtask_reset(void);	
-
+void subtask_thread_reset(Task_Type task);
 
 
 void speed_control_task(int8_t speed);
