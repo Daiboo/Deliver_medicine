@@ -180,7 +180,7 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf,uint8_t num)  //树莓派�
     uint8_t sum = 0;
     for(uint8_t i=0;i<(num-3);i++)  sum ^= *(data_buf+i);    // 异或校验
     if(!(sum==*(data_buf+num-3)))
-        if(!(*(data_buf)==Raspi_Head[1]&&*(data_buf+1)==Raspi_Head[0]))         return;//判断帧头
+        if(!(*(data_buf)==Raspi_Head[0]&&*(data_buf+1)==Raspi_Head[1]))         return;//判断帧头
         if(!(*(data_buf+num-2)==Raspi_End[0]&&*(data_buf+num-1)==Raspi_End[1])) return;//帧尾校验 
     
     raspi_ctrl_procedure.instruture = *(data_buf+2);        // 第三位为指令
