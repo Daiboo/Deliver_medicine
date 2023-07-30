@@ -168,7 +168,7 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
 {
 
 
-    write_6_8_number_f1(10,3,1);
+
     uint8_t _cnt = 0;
     uint8_t sum = 0;
     for(uint8_t i=0;i<(num-3);i++)  sum ^= *(data_buf+i);    // 异或校验
@@ -222,8 +222,8 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
     {
         raspi_ctrl_procedure.left_pwm = *(data_buf + 4) << 8 | *(data_buf + 5);
         raspi_ctrl_procedure.right_pwm = *(data_buf + 6) << 8 | *(data_buf + 7);
-        write_6_8_number_f1(20,3,1);
-        Open_Loop_Motor_Output(raspi_ctrl_procedure.left_pwm, raspi_ctrl_procedure.right_pwm);
+        
+        
     }
     break;
     default:

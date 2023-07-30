@@ -127,6 +127,7 @@ void speed_control_100hz(uint8_t _speed_ctrl_mode)
 ****************************************************/
 void nmotor_output(uint8_t _speed_ctrl_mode)
 {
+
 	if(_speed_ctrl_mode==0)//仅在初始调试电机运动方向时使用
 	{
 		left_pwm =motion_ctrl_pwm;
@@ -136,6 +137,12 @@ void nmotor_output(uint8_t _speed_ctrl_mode)
 	{
 		right_pwm=speed_output[1];
 		left_pwm =speed_output[0];
+	}
+	if(raspi_ctrl_procedure.instruture == Raspi_Ctrl_OPen_Loop_Output_Pwm + Instruction_Base_Address)
+	{
+		right_pwm = raspi_ctrl_procedure.right_pwm;
+		left_pwm = raspi_ctrl_procedure.left_pwm;
+
 	}
 	else
 	{
@@ -213,6 +220,7 @@ void nmotor_output(uint8_t _speed_ctrl_mode)
 */
 void Open_Loop_Motor_Output(int16_t left_pwm, int16_t right_pwm)
 {
+
 
 	left_pwm =constrain_float(left_pwm,-motor_max_default,motor_max_default);
 	right_pwm=constrain_float(right_pwm,-motor_max_default,motor_max_default);
