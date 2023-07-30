@@ -232,12 +232,12 @@ void deliver_medicine_task(void)
 // ------------------------------状态：起初数字识别任务-------------------------------
 	if(flight_subtask_cnt[n] == inbegin_number_recognition_task_state)// 状态：起初数字识别任务，直到收到完成标志位才转移
 	{
-		SDK_DT_Send_Check(Number_recognition_inbegin_task);  // 发送起初数字识别任务给openmv
+		Tidata_Tosend_Raspi(Number_recognition_inbegin_task);  // 发送起初数字识别任务给openmv
 		if(camera1.inbegin_recognition_finsh_flag)
 		{
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
 			// flight_subtask_cnt[n] = clockwise_rotate_90_task_state;  // 下一状态：右转90度
-			SDK_DT_Send_Check(Tracking_task);  // 发送循迹任务给openmv
+			Tidata_Tosend_OpenMV(Tracking_task);  // 发送循迹任务给openmv
 			camera1.inbegin_recognition_finsh_flag = 0;
 		}
 	}
@@ -269,12 +269,12 @@ void deliver_medicine_task(void)
 		speed_expect[1] = speed_setup-turn_ctrl_pwm*turn_scale;//右边轮子速度期望
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);
-		SDK_DT_Send_Check(Tracking_task);  // 发送循迹任务给openmv
+		Tidata_Tosend_OpenMV(Tracking_task);  // 发送循迹任务给openmv
 
 		if(camera1.cross == 1)   // 如果检测到十字
 		{	
 			// camera1.cross = 0;
-			SDK_DT_Send_Check(Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
+			Tidata_Tosend_OpenMV(Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
 
 			flight_subtask_cnt[n] = speed0_control_until_receive_todo;
 			// flight_subtask_cnt[n] = speed0_control;

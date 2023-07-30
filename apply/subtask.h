@@ -11,11 +11,7 @@ typedef enum
 	Distance_Control,
 	Contrarotate_90,
 	Clockwise_Rotation_90,
-
-
-
     Deliver_Medicine,
-
 	Car_Stop,
 }Task_Type;
 

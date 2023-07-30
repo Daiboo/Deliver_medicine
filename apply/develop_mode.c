@@ -70,6 +70,7 @@ void sdk_duty_run(void)
 			//速度控制
 			speed_control_100hz(speed_ctrl_mode);
 		}
+		break;
 
 //		case 0://遥控控制模式
 //		{

@@ -9,7 +9,7 @@ unsigned char sdk_data_to_send[10];
 /**
  * @brief 向openmv发送任务指定命令
 */
-void SDK_DT_Send_Check(uint8_t mode)
+void Tidata_Tosend_OpenMV(uint8_t mode)
 {
 	sdk_data_to_send[0]=0xFF;
 	sdk_data_to_send[1]=0xFE;
