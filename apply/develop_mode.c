@@ -52,6 +52,7 @@ void sdk_duty_run(void)
 		{
 			deliver_medicine_task();
 		}
+		break;
 		case Car_Stop:
 		{
 			
@@ -60,6 +61,7 @@ void sdk_duty_run(void)
 	
 			
 		}
+		break;
 		case 99:
 		{
 			// SDK_DT_Send_Check(Tracking_task);
