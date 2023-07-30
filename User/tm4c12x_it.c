@@ -78,6 +78,7 @@ void UART3_IRQHandler(void)
  {	
 		uint8_t ch=UARTCharGet(UART3_BASE);
 		Raspi_Data_Phrase_Prepare_Lite(ch);   // 树莓派发送指令解析函数
+    // raspi_ctrl_procedure.left_pwm = ch;
 	}	
 }
 
