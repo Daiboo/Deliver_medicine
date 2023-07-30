@@ -58,13 +58,15 @@ void clockwise_rotate_90_task(void) //顺时针转90度
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);	
 	}
-	else if(flight_subtask_cnt[n]==1)  // 等待工作模式变化
+	else if(flight_subtask_cnt[n]==1)  
 	{
 		trackless_output.yaw_ctrl_mode=CLOCKWISE;
 		trackless_output.yaw_outer_control_output  = 0;  // 偏航姿态控制器输入
 		if(trackless_output.yaw_ctrl_end==1)
 		{
-			subtask_finish_flag[n] = 1;  // 任务已完成
+			subtask_finish_flag[n] = 1;  		// 置完成标志位
+			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Clockwise_Rotation_90] = 0; // 置已完成
+
 		}
 
 		speed_ctrl_mode = 1;
@@ -107,7 +109,8 @@ void contrarotate_90_task(void)		//逆时针转90°
 		trackless_output.yaw_outer_control_output  = 0;  // 偏航姿态控制器输入
 		if(trackless_output.yaw_ctrl_end==1)
 		{
-			subtask_finish_flag[n] = 1;  // 任务已完成
+			subtask_finish_flag[n] = 1;  // 置完成标志位
+			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Contrarotate_90] = 0;
 		}
 
 		speed_ctrl_mode = 1;
@@ -133,13 +136,24 @@ void speed_control_task(int8_t speed)
 	if(flight_subtask_cnt[n] == 0)
 	{
 		speed_ctrl_mode = 1;
+		speed_setup = speed;
 		speed_expect[0]=speed_setup;//左边轮子速度期望
 		speed_expect[1]=speed_setup;//右边轮子速度期望
+		flight_subtask_cnt[n]++;
 	}
 	else
 	{
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);
+		if(ABS(speed_error[0]) <= 0.5f && ABS(speed_error[1]) <= 0.5f)    // 满足精度要求
+		{
+			subtask_finish_flag[n] = 1;
+			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Speed_Control] = 0;
+		}
+		else
+		{
+			subtask_finish_flag[n] = 0;   // 置完成标志位
+		}
 	}
 }
 
@@ -163,8 +177,24 @@ void distance_control_task(float distance)
 		speed_expect[0]=speed_setup;//左边轮子速度期望
 		speed_expect[1]=speed_setup;//右边轮子速度期望
 		speed_control_100hz(speed_ctrl_mode);
+
+		// 判断距离
+		if(flight_global_cnt[n] < target_point_fit_times)//连续N次满足位置偏差很小,即认为位置控制完成
+		{
+			if(ABS(distance_ctrl.error) < distance_precision_cm) flight_global_cnt[n]++;	
+			else flight_global_cnt[n]/=2;		
+		}
+		else 
+		{
+			flight_global_cnt[n]=0;
+			subtask_finish_flag[n] = 1;		// 置完成标志位
+			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Distance_Control] = 0;
+		}
+
 	}
 }
+
+
 
 
 // ----------------------------------------送药小车任务------------------------------------------

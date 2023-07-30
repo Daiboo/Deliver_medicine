@@ -9,12 +9,15 @@ void speed_control_100hz(uint8_t _speed_ctrl_mode);
 void nmotor_output(uint8_t _speed_ctrl_mode);
 void Open_Loop_Motor_Output(int16_t left_pwm, int16_t right_pwm);
 
+extern float speed_error[2];
 extern float speed_expect[2];
 extern float speed_feedback[2];
 extern float speed_output[2];    // 速度输出
 extern float speed_integral[2];
 extern float speed_setup;
-extern float motion_ctrl_pwm,turn_ctrl_pwm;
+extern float motion_ctrl_pwm,turn_ctrl_pwm;  //  运动转向控制输出
+
+
 extern uint8_t  speed_ctrl_mode;
 
 extern float speed_kp,speed_ki,speed_kd;

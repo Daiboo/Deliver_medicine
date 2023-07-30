@@ -179,6 +179,8 @@ void ctrl_params_init(void)
 										0,0, //积分分离标志位与引入积分控制时的限幅值
 										1);  //微分间隔时间
 	azimuth_ctrl=steerangle_ctrl;	  // 航向控制
+
+	Raspi_Ctrl_Procedure_Init(); 		// 树莓派程序控制参数初始化
 }
 
 /***************************************************

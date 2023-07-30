@@ -7,10 +7,13 @@
 // ----------------------任务类别------------------------
 typedef enum
 {
-	Clockwise_Rotation_90 = 0,
+	Speed_Control = 0,
+	Distance_Control,
 	Contrarotate_90,
-    Speed_Control,
-    Distance_Control,
+	Clockwise_Rotation_90,
+
+
+
     Deliver_Medicine,
 
 	Car_Stop,

@@ -61,6 +61,7 @@ int main()
 void duty_200hz(void)    // 每5ms执行一次
 {
 	get_wheel_speed();					   //获取轮胎转速
+	Raspi_Ctrl_Instruction_Dispatch();
 	sdk_duty_run();					  		 //SDK总任务控制，调参
 	nmotor_output(speed_ctrl_mode);          //控制器输出，主要是输出pwm的
 	// rangefinder_statemachine();		 //超声波传感器数据获取

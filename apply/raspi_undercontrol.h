@@ -13,6 +13,9 @@ typedef enum
     Raspi_Ctrl_Clockwise_Rotation_90,   
 
     Raspi_Ctrl_OPen_Loop_Output_Pwm,       // 开环输出pwm
+    Raspi_Ctrl_Send_State_Data,
+
+    Raspi_Ctrl_Send_Instruction_toRaspi,   // 用于ti板发送控制任务给树莓派
 
     
 }Raspi_Ctrl_Instruction_Type;
@@ -37,8 +40,9 @@ typedef struct
 }Raspi_Ctrl_Procedure;
 extern Raspi_Ctrl_Procedure raspi_ctrl_procedure;
 
-
-
+void Raspi_Ctrl_Procedure_Init(void);
+void Raspi_Ctrl_Send_State(void);
+void Raspi_Ctrl_Instruction_Dispatch(void);
 void Raspi_Data_Phrase_Prepare_Lite(uint8_t data);
 void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf,uint8_t num);  //树莓派数据解析进程
 

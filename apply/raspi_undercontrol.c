@@ -4,8 +4,7 @@
 static uint8_t Raspi_Head[2] = {0xFF, 0xFC}; // 数据帧头
 static uint8_t Raspi_End[2] = {0xA1, 0xA2};  // 数据帧尾
 
-uint8_t tidata_tosend_raspi[10]; // 要发送给树莓派的数据
-
+uint8_t Raspi_Ctrl_Send_Databuf[50];    // 要发送给树莓派的数据缓冲区
 /**
  * @brief 串口发送数据函数
  * @param buf 数据缓冲区的数组指针
@@ -73,25 +72,31 @@ void Byte2Float(uint8_t *Byte, uint8_t Subscript, float *FloatValue)
 }
 
 /**
- * @brief ti板子要发送给树莓派的数据
+ * @brief 用于ti板子要发送给树莓派的任务
  */
-void Tidata_Tosend_Raspi(unsigned char mode, COM_SDK com)
+void Tidata_Tosend_Raspi(uint8_t mode)
 {
-    tidata_tosend_raspi[0] = 0xFF;
-    tidata_tosend_raspi[1] = 0xFE;
-    tidata_tosend_raspi[2] = 0xA0; // 功能字
-    tidata_tosend_raspi[3] = 2;    // 长度
-    tidata_tosend_raspi[4] = mode; // 功能
-    tidata_tosend_raspi[5] = 0;    // 和校验
+    uint8_t _cnt = 0;
     uint8_t sum = 0;
-    for (uint8_t i = 0; i < 6; i++)
-        sum += tidata_tosend_raspi[i];
-    tidata_tosend_raspi[6] = sum;
-    UART_SendBytes(3, tidata_tosend_raspi, 7);
+    uint8_t i;
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Head[0];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Head[1];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Ctrl_Send_Instruction_toRaspi + Instruction_Base_Address;
+    Raspi_Ctrl_Send_Databuf[_cnt++] = 0;  // 有效数据长度
+    Raspi_Ctrl_Send_Databuf[_cnt++] = mode;  // 有效数据
+
+    Raspi_Ctrl_Send_Databuf[3] = _cnt - 4;  // 有效数据长度
+    // 异或校验位
+    for(i = 0; i < _cnt; i++) sum ^= Raspi_Ctrl_Send_Databuf[i];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = sum;
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_End[0];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_End[1];
+    Serial_Data_Send(Raspi_Ctrl_Send_Databuf, _cnt);
 }
 
 uint32_t Raspi_receive_fault_cnt = 0;
 static uint8_t Raspi_Receivebuf[100];
+
 
 /**
  * @brief 解析来自树莓派发送的数据
@@ -124,8 +129,6 @@ void Raspi_Data_Phrase_Prepare_Lite(uint8_t data)
     }
     else if (state == 3 && data < 100) // 有效数据长度
     {
-
-
         state = 4;
         Raspi_Receivebuf[3] = data;
         data_len = data; // 有效数据长度
@@ -164,10 +167,22 @@ void Raspi_Data_Phrase_Prepare_Lite(uint8_t data)
 
 Raspi_Ctrl_Procedure raspi_ctrl_procedure;
 
+/**
+ * @brief 树莓派控制参数初始化
+*/
+void Raspi_Ctrl_Procedure_Init(void)
+{
+    for(uint8_t i = 0; i < Instruction_Number_Max; i++)
+    {
+        raspi_ctrl_procedure.Instruture_Pending_Bit[i] = 0;
+        raspi_ctrl_procedure.Task_Executing_Bit[i] = 0;
+    }
+}
+
+
+
 void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派数据解析进程
 {
-
-
 
     uint8_t _cnt = 0;
     uint8_t sum = 0;
@@ -176,6 +191,7 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
         if(!(*(data_buf)==Raspi_Head[0]&&*(data_buf+1)==Raspi_Head[1]))         return;//判断帧头
         if(!(*(data_buf+num-2)==Raspi_End[0]&&*(data_buf+num-1)==Raspi_End[1])) return;//帧尾校验 
     
+ 
     raspi_ctrl_procedure.instruture = *(data_buf+2);        // 第三位为指令
 
     switch (raspi_ctrl_procedure.instruture)
@@ -217,12 +233,13 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
     }
     break;
 
-    // 以下是开环控制
-    case Raspi_Ctrl_OPen_Loop_Output_Pwm + Instruction_Base_Address: // 开环前进
+   
+    case Raspi_Ctrl_OPen_Loop_Output_Pwm + Instruction_Base_Address: // 开环输出pwm
     {
         raspi_ctrl_procedure.left_pwm = *(data_buf + 4) << 8 | *(data_buf + 5);
         raspi_ctrl_procedure.right_pwm = *(data_buf + 6) << 8 | *(data_buf + 7);
-        
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm] = 1;
+        Car_Status_Tick();
         
     }
     break;
@@ -236,9 +253,14 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
     }
 }
 
+/**
+ * @brief 树莓派指令分配函数
+*/
 void Raspi_Ctrl_Instruction_Dispatch(void)
 {
-    if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Speed_Control])
+    static uint8_t i;
+    static uint8_t Executing_flag = 0;
+    if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Speed_Control])  // 如果是待解决的话
     {
         trackless_output.unlock_flag = UNLOCK;
         sdk_work_mode = Speed_Control;
@@ -272,13 +294,59 @@ void Raspi_Ctrl_Instruction_Dispatch(void)
         raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Clockwise_Rotation_90] = 1; // 挂起正在执行
         subtask_thread_reset(Clockwise_Rotation_90);                                   // 复位子任务线程
     }
+    else if(raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm])
+    {
+        trackless_output.unlock_flag = UNLOCK;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm] = 0;
+        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm] = 1;
+    }
     else
     {
-        // 如果有任务正在执行
-
-        trackless_output.unlock_flag = LOCK; // 锁电机
+        Executing_flag = 0;
+        for(i = 0; i < Instruction_Number_Max; i++)
+        {
+            if(raspi_ctrl_procedure.instruture == Raspi_Ctrl_Speed_Control)
+            {
+                Executing_flag = 1;
+                break;
+            }
+            if(raspi_ctrl_procedure.Task_Executing_Bit[i])  // 如果有任务正在执行
+            {
+                Executing_flag = 1;
+            }
+        }
+        if(Executing_flag == 0) trackless_output.unlock_flag = LOCK; // 没任务执行则锁电机
+        
     }
 }
 
-// 判断是否有任务正在执行
-// uint8_t
+
+
+/**
+ * @brief Ti板给树莓派发送应答和完成标志位
+ * 
+*/
+void Raspi_Ctrl_Send_State(void)
+{
+    uint8_t _cnt = 0;
+    uint8_t sum = 0;
+    uint8_t i;
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Head[0];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Head[1];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Ctrl_Send_State_Data + Instruction_Base_Address;
+    Raspi_Ctrl_Send_Databuf[_cnt++] = 0;  // 有效数据长度
+    Raspi_Ctrl_Send_Databuf[_cnt++] = subtask_finish_flag[Speed_Control];  // 速度控制完成标志位
+    Raspi_Ctrl_Send_Databuf[_cnt++] = subtask_finish_flag[Distance_Control];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = subtask_finish_flag[Contrarotate_90];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = subtask_finish_flag[Clockwise_Rotation_90];
+    
+    Raspi_Ctrl_Send_Databuf[3] = _cnt - 4;
+    // 异或校验位
+    for(i = 0; i < _cnt; i++) sum ^= Raspi_Ctrl_Send_Databuf[i];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = sum;
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_End[0];
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_End[1];
+    Serial_Data_Send(Raspi_Ctrl_Send_Databuf, _cnt);
+}
+
+

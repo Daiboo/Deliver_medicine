@@ -27,13 +27,13 @@ void sdk_duty_run(void)
 	{
 		case Speed_Control:   // 速度控制--速度期望来源于树莓派指定
 		{
-			speed_control_task(0);
+			speed_control_task(raspi_ctrl_procedure.speed);
 		}
 		break;
 
 		case Distance_Control:  // 距离控制--距离参数来源于树莓派指定
 		{
-			distance_control_task(0);
+			distance_control_task(raspi_ctrl_procedure.distance);
 		}
 		break;
 
@@ -55,11 +55,8 @@ void sdk_duty_run(void)
 		break;
 		case Car_Stop:
 		{
-			
 			speed_ctrl_mode = 0;  // 0模式，直接pwm控制
 			motion_ctrl_pwm = 0;
-	
-			
 		}
 		break;
 		case 99:

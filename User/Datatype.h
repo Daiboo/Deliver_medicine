@@ -94,7 +94,6 @@ typedef struct
 	int8_t left_motion_dir_config	,right_motion_dir_config; //电机运动方向配置
 	float wheel_radius_cm;				//轮胎半径,单位为cm
 	uint16_t pulse_num_per_circle;//轮胎转动一圈累计的脉冲数量
-	// uint16_t servo_median_value1,servo_median_value2;
 }motor_config;
 
 // ************************编码器********************
