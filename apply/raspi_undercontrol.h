@@ -1,22 +1,21 @@
 #ifndef __RASPI_UNDERCONTROL_H
 #define __RASPI_UNDERCONTROL_H
 #include <stdint.h>
-// ----------------------------指令类型--------------------------------
+// ----------------------------指令或任务类型--------------------------------
 #define Instruction_Number_Max 10
 #define Instruction_Base_Address 0xA0
 
 typedef enum
 {
-    Raspi_Ctrl_Speed_Control = 0,
-    Raspi_Ctrl_Distance_Control,        
-    Raspi_Ctrl_Contrarotate_90,         
-    Raspi_Ctrl_Clockwise_Rotation_90,   
-
-    Raspi_Ctrl_OPen_Loop_Output_Pwm,       // 开环输出pwm
-    Raspi_Ctrl_Send_State_Data,
-
-    Raspi_Ctrl_Send_Instruction_toRaspi,   // 用于ti板发送控制任务给树莓派
-
+    Raspi_Ctrl_Speed_Control = Instruction_Base_Address,           // 被树莓派速度控制
+    Raspi_Ctrl_Distance_Control,            // 被树莓派距离控制
+    Raspi_Ctrl_Contrarotate_90,             // 被树莓派控制左转
+    Raspi_Ctrl_Clockwise_Rotation_90,       // 被树莓派控制右转
+    Raspi_Ctrl_OPen_Loop_Output_Pwm,        // 树莓派控制ti开环输出pwm
+    Raspi_Ctrl_Send_State_Data,             // ti发送状态数据给树莓派
+    Raspi_Ctrl_Send_Instruction_toRaspi,    // ti板发送控制任务给树莓派
+    Raspi_Ctrl_Number_Recongition_inbegin_task,     // 树莓派起初数字识别任务
+    Raspi_Ctrl_Number_recognition_intrack_task,     // 树莓派赛道数字识别任务
     
 }Raspi_Ctrl_Instruction_Type;
 

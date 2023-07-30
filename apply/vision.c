@@ -22,8 +22,9 @@ void SDK_DT_Send_Check(uint8_t mode)
 	for(uint8_t i=0;i<6;i++) sum += sdk_data_to_send[i];
 	sdk_data_to_send[6]=sum;
 	UART_SendBytes(7,sdk_data_to_send, 7);
-	
 }
+
+
 
 
 #define SDK_TARGET_X_OFFSET  0
