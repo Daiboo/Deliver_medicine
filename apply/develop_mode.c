@@ -54,7 +54,11 @@ void sdk_duty_run(void)
 		}
 		case Car_Stop:
 		{
-			Open_Loop_Motor_Output(0,0);
+			
+			speed_ctrl_mode = 0;  // 0模式，直接pwm控制
+			motion_ctrl_pwm = 0;
+	
+			
 		}
 		case 99:
 		{
