@@ -81,7 +81,7 @@ void Tidata_Tosend_Raspi(uint8_t mode)
     uint8_t i;
     Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Head[0];
     Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Head[1];
-    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Ctrl_Send_Instruction_toRaspi + Instruction_Base_Address;
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Ctrl_Send_Instruction_toRaspi;
     Raspi_Ctrl_Send_Databuf[_cnt++] = 0;  // 有效数据长度
     Raspi_Ctrl_Send_Databuf[_cnt++] = mode;  // 有效数据
 
@@ -220,13 +220,13 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
         Car_Status_Tick();
     }
     break;
-    case Raspi_Ctrl_Contrarotate_90 + Instruction_Base_Address: // 左转90度
+    case Raspi_Ctrl_Contrarotate_90: // 左转90度
     {
         raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Contrarotate_90] = 1;
         Car_Status_Tick();
     }
     break;
-    case Raspi_Ctrl_Clockwise_Rotation_90 + Instruction_Base_Address: // 右转90度
+    case Raspi_Ctrl_Clockwise_Rotation_90: // 右转90度
     {
         raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Clockwise_Rotation_90] = 1;
         Car_Status_Tick();
@@ -234,7 +234,7 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
     break;
 
    
-    case Raspi_Ctrl_OPen_Loop_Output_Pwm + Instruction_Base_Address: // 开环输出pwm
+    case Raspi_Ctrl_OPen_Loop_Output_Pwm: // 开环输出pwm
     {
         raspi_ctrl_procedure.left_pwm = *(data_buf + 4) << 8 | *(data_buf + 5);
         raspi_ctrl_procedure.right_pwm = *(data_buf + 6) << 8 | *(data_buf + 7);
@@ -245,11 +245,32 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
     break;
 
 
-    // todo 解析来自树莓派任务数据
-    case Raspi_Ctrl_Send_Instruction_toRaspi + Instruction_Base_Address:
+    
+    case Raspi_Ctrl_Number_Recongition_inbegin_task:   // note:这里直接移植原openmv的代码
     {
         camera1.inbegin_recognition_finsh_flag = *(data_buf + 4);
 
+    }
+    break;
+    case Raspi_Ctrl_Number_recognition_intrack_task:   // note:这里直接移植原openmv的代码
+    {
+        camera1.intrack_todo_task = *(data_buf+4);
+
+
+        if(camera1.intrack_todo_task != 7)  
+        {
+            if(camera1.trust_cnt_number_recongition < 10)	 
+            {
+                camera1.trust_cnt_number_recongition++;
+                camera1.trust_flag_number_recongition = 0;
+            }
+            else camera1.trust_flag_number_recongition = 1;
+        }
+        else 
+        {
+            camera1.trust_cnt_number_recongition /= 2;
+            camera1.trust_flag_number_recongition = 0;
+        }
     }
     break;
     default:
