@@ -558,11 +558,11 @@ void screen_display(void)
 			ssd1306_draw_line(64,0,64,64,WHITE);
 
 			ssd1306_display();
-			display_6_8_string(0,0,"point_x:");  display_6_8_number_pro(80,0,camera1.x);		write_6_8_number(105,0,page_number+1);
+			display_6_8_string(0,0,"point_x:");  display_6_8_number_pro(60,0,camera1.x);	display_6_8_number_pro(80,0,camera1.rho);				write_6_8_number(105,0,page_number+1);
 			display_6_8_string(0,1,"mode::"); 	 write_6_8_number(70,1,camera1.task);
 			display_6_8_string(0,2,"point_f:");  write_6_8_number(70,2,camera1.flag);  write_6_8_number(80,2,camera1.trust_flag_tracking_or_cross);
 			display_6_8_string(0,3,"FPS:");      write_6_8_number(70,3,camera1.fps);
-			display_6_8_string(0,4,"cross:");      write_6_8_number(70,4,camera1.cross);  write_6_8_number(80,4,camera1.trust_flag_tracking_or_cross);
+			display_6_8_string(0,4,"cross:");    write_6_8_number(70,4,camera1.cross);  write_6_8_number(80,4,camera1.trust_flag_tracking_or_cross);
 			display_6_8_string(0,5,"be_fi_f:");      write_6_8_number(70,5,camera1.inbegin_recognition_finsh_flag);
 			display_6_8_string(0,6,"todo:");      write_6_8_number(70,6,camera1.intrack_todo_task);  write_6_8_number(80,6,camera1.trust_flag_number_recongition);
 

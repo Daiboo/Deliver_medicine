@@ -167,15 +167,14 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 		{
 			
 			target->x = *(data_buf+4);  // 发来的是前8位
-			target->rho = *(data_buf+5);
-			
+			target->rho = *(data_buf+5);  
 			target->cross = *(data_buf+6);
 			target->flag = *(data_buf+7);
 			target->fps = *(data_buf+8);
 
 
 			target->target_ctrl_enable=target->flag;   // 检测到了为1，一般情况下都为1
-			if(target->flag!=0)  
+			if(target->flag != 0)  
 			{
 				if(target->trust_cnt_tracking_or_cross<20)	 
 				{
@@ -189,10 +188,12 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 				target->trust_cnt_tracking_or_cross /= 2;
 				target->trust_flag_tracking_or_cross = 0;
 			}	
-			gray_status[1] = target->x;	vision_status_worse/=2;
+
+			gray_status[1] = target->x;	
 			rho_status[1] = target->rho;
 
 		}
+		break;
 		// case Number_recognition_inbegin_task:
 		// {
 
@@ -228,6 +229,7 @@ void Openmv_Data_Receive_Anl_1(uint8_t *data_buf,uint8_t num,Target_Check *targe
 			target->target_ctrl_enable = 0;
 			
 			target->x=0;
+			target->rho = 0;
 		}
 	}
 

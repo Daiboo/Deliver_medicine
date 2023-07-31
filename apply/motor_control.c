@@ -138,7 +138,7 @@ void nmotor_output(uint8_t _speed_ctrl_mode)
 		right_pwm=speed_output[1];
 		left_pwm =speed_output[0];
 	}
-	if(raspi_ctrl_procedure.instruture == Raspi_Ctrl_OPen_Loop_Output_Pwm + Instruction_Base_Address)
+	else if(raspi_ctrl_procedure.instruture == Raspi_Ctrl_OPen_Loop_Output_Pwm)
 	{
 		right_pwm = raspi_ctrl_procedure.right_pwm;
 		left_pwm = raspi_ctrl_procedure.left_pwm;

@@ -65,7 +65,7 @@ void clockwise_rotate_90_task(void) //顺时针转90度
 		if(trackless_output.yaw_ctrl_end==1)
 		{
 			subtask_finish_flag[n] = 1;  		// 置完成标志位
-			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Clockwise_Rotation_90] = 0; // 置已完成
+			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Clockwise_Rotation_90-Instruction_Base_Address] = 0; // 置已完成
 
 		}
 
@@ -110,7 +110,7 @@ void contrarotate_90_task(void)		//逆时针转90°
 		if(trackless_output.yaw_ctrl_end==1)
 		{
 			subtask_finish_flag[n] = 1;  // 置完成标志位
-			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Contrarotate_90] = 0;
+			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Contrarotate_90-Instruction_Base_Address] = 0;
 		}
 
 		speed_ctrl_mode = 1;
@@ -148,7 +148,7 @@ void speed_control_task(int8_t speed)
 		if(ABS(speed_error[0]) <= 0.5f && ABS(speed_error[1]) <= 0.5f)    // 满足精度要求
 		{
 			subtask_finish_flag[n] = 1;
-			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Speed_Control] = 0;
+			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Speed_Control-Instruction_Base_Address] = 0;
 		}
 		else
 		{
@@ -188,7 +188,7 @@ void distance_control_task(float distance)
 		{
 			flight_global_cnt[n]=0;
 			subtask_finish_flag[n] = 1;		// 置完成标志位
-			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Distance_Control] = 0;
+			raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Distance_Control-Instruction_Base_Address] = 0;
 		}
 
 	}
@@ -229,13 +229,17 @@ void deliver_medicine_task(void)
 	static uint8_t n = Deliver_Medicine;
 	// static uint8_t Car_Intrack_todo_task = 0;
 
+
 // ------------------------------状态：起初数字识别任务-------------------------------
 	if(flight_subtask_cnt[n] == inbegin_number_recognition_task_state)// 状态：起初数字识别任务，直到收到完成标志位才转移
 	{
 		Tidata_Tosend_Raspi(Raspi_Ctrl_Number_Recongition_inbegin_task);  // 发送起初数字识别任务给openmv
+
 		if(camera1.inbegin_recognition_finsh_flag)
 		{
+
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
+			// flight_subtask_cnt[n] = speed0_control;
 			// flight_subtask_cnt[n] = clockwise_rotate_90_task_state;  // 下一状态：右转90度
 			Tidata_Tosend_OpenMV(Tracking_task);  // 发送循迹任务给openmv
 			camera1.inbegin_recognition_finsh_flag = 0;
@@ -269,7 +273,7 @@ void deliver_medicine_task(void)
 		speed_expect[1] = speed_setup-turn_ctrl_pwm*turn_scale;//右边轮子速度期望
 		//速度控制
 		speed_control_100hz(speed_ctrl_mode);
-		Tidata_Tosend_OpenMV(Tracking_task);  // 发送循迹任务给openmv
+		// Tidata_Tosend_OpenMV(Tracking_task);  // 发送循迹任务给openmv
 
 		if(camera1.cross == 1)   // 如果检测到十字
 		{	

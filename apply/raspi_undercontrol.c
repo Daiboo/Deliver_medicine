@@ -196,7 +196,7 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
 
     switch (raspi_ctrl_procedure.instruture)
     {
-    case Raspi_Ctrl_Speed_Control + Instruction_Base_Address: // 速度控制指令
+    case Raspi_Ctrl_Speed_Control: // 速度控制指令
     {
         _cnt = 0;
         raspi_ctrl_procedure.speed_byte_buf[_cnt++] = *(data_buf + _cnt + 4);
@@ -204,11 +204,11 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
         raspi_ctrl_procedure.speed_byte_buf[_cnt++] = *(data_buf + _cnt + 4);
         raspi_ctrl_procedure.speed_byte_buf[_cnt++] = *(data_buf + _cnt + 4);
         Byte2Float(raspi_ctrl_procedure.speed_byte_buf, 0, &raspi_ctrl_procedure.speed);
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Speed_Control] = 1;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Speed_Control-Instruction_Base_Address] = 1;
         Car_Status_Tick();
     }
     break;
-    case Raspi_Ctrl_Distance_Control + Instruction_Base_Address: // 距离控制指令
+    case Raspi_Ctrl_Distance_Control: // 距离控制指令
     {
         _cnt = 0;
         raspi_ctrl_procedure.distance_byte_buf[_cnt++] = *(data_buf + _cnt + 4);
@@ -216,19 +216,19 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
         raspi_ctrl_procedure.distance_byte_buf[_cnt++] = *(data_buf + _cnt + 4);
         raspi_ctrl_procedure.distance_byte_buf[_cnt++] = *(data_buf + _cnt + 4);
         Byte2Float(raspi_ctrl_procedure.distance_byte_buf, 0, &raspi_ctrl_procedure.distance);
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Distance_Control] = 1;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Distance_Control-Instruction_Base_Address] = 1;
         Car_Status_Tick();
     }
     break;
     case Raspi_Ctrl_Contrarotate_90: // 左转90度
     {
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Contrarotate_90] = 1;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Contrarotate_90-Instruction_Base_Address] = 1;
         Car_Status_Tick();
     }
     break;
     case Raspi_Ctrl_Clockwise_Rotation_90: // 右转90度
     {
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Clockwise_Rotation_90] = 1;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Clockwise_Rotation_90-Instruction_Base_Address] = 1;
         Car_Status_Tick();
     }
     break;
@@ -238,14 +238,12 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
     {
         raspi_ctrl_procedure.left_pwm = *(data_buf + 4) << 8 | *(data_buf + 5);
         raspi_ctrl_procedure.right_pwm = *(data_buf + 6) << 8 | *(data_buf + 7);
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm] = 1;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm-Instruction_Base_Address] = 1;
         Car_Status_Tick();
         
     }
     break;
 
-
-    
     case Raspi_Ctrl_Number_Recongition_inbegin_task:   // note:这里直接移植原openmv的代码
     {
         camera1.inbegin_recognition_finsh_flag = *(data_buf + 4);
@@ -290,45 +288,45 @@ void Raspi_Ctrl_Instruction_Dispatch(void)
 {
     static uint8_t i;
     static uint8_t Executing_flag = 0;
-    if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Speed_Control])  // 如果是待解决的话
+    if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Speed_Control-Instruction_Base_Address])  // 如果是待解决的话
     {
         trackless_output.unlock_flag = UNLOCK;
         sdk_work_mode = Speed_Control;
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Speed_Control] = 0;
-        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Speed_Control] = 1; // 挂起正在执行
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Speed_Control-Instruction_Base_Address] = 0;
+        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Speed_Control-Instruction_Base_Address] = 1; // 挂起正在执行
         subtask_thread_reset(Speed_Control);                                   // 复位子任务线程
     }
-    else if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Distance_Control])
+    else if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Distance_Control-Instruction_Base_Address])
     {
         trackless_output.unlock_flag = UNLOCK;
         sdk_work_mode = Distance_Control;
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Distance_Control] = 0;
-        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Distance_Control] = 1; // 挂起正在执行
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Distance_Control-Instruction_Base_Address] = 0;
+        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Distance_Control-Instruction_Base_Address] = 1; // 挂起正在执行
         subtask_thread_reset(Distance_Control);                                   // 复位子任务线程
     }
-    else if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Contrarotate_90])
+    else if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Contrarotate_90-Instruction_Base_Address])
     {
         trackless_output.unlock_flag = UNLOCK;
         sdk_work_mode = Contrarotate_90;
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Contrarotate_90] = 0;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Contrarotate_90-Instruction_Base_Address] = 0;
 
-        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Contrarotate_90] = 1; // 挂起正在执行
+        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Contrarotate_90-Instruction_Base_Address] = 1; // 挂起正在执行
         subtask_thread_reset(Contrarotate_90);                                   // 复位子任务线程
     }
-    else if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Clockwise_Rotation_90])
+    else if (raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Clockwise_Rotation_90-Instruction_Base_Address])
     {
         trackless_output.unlock_flag = UNLOCK;
         sdk_work_mode = Clockwise_Rotation_90;
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Clockwise_Rotation_90] = 0;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_Clockwise_Rotation_90-Instruction_Base_Address] = 0;
 
-        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Clockwise_Rotation_90] = 1; // 挂起正在执行
+        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_Clockwise_Rotation_90-Instruction_Base_Address] = 1; // 挂起正在执行
         subtask_thread_reset(Clockwise_Rotation_90);                                   // 复位子任务线程
     }
-    else if(raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm])
+    else if(raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm-Instruction_Base_Address])
     {
         trackless_output.unlock_flag = UNLOCK;
-        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm] = 0;
-        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm] = 1;
+        raspi_ctrl_procedure.Instruture_Pending_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm-Instruction_Base_Address] = 0;
+        raspi_ctrl_procedure.Task_Executing_Bit[Raspi_Ctrl_OPen_Loop_Output_Pwm-Instruction_Base_Address] = 1;
     }
     else
     {
@@ -363,7 +361,7 @@ void Raspi_Ctrl_Send_State(void)
     uint8_t i;
     Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Head[0];
     Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Head[1];
-    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Ctrl_Send_State_Data + Instruction_Base_Address;
+    Raspi_Ctrl_Send_Databuf[_cnt++] = Raspi_Ctrl_Send_State_Data;
     Raspi_Ctrl_Send_Databuf[_cnt++] = 0;  // 有效数据长度
     Raspi_Ctrl_Send_Databuf[_cnt++] = subtask_finish_flag[Speed_Control];  // 速度控制完成标志位
     Raspi_Ctrl_Send_Databuf[_cnt++] = subtask_finish_flag[Distance_Control];
