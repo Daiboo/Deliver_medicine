@@ -258,7 +258,7 @@ void deliver_medicine_task(void)
 	else if(flight_subtask_cnt[n] == tracking_distance_ctrl + 1)
 	{
 		distance_control();
-		=distance_cspeed_setuptrl.output;
+		speed_setup=distance_ctrl.output;
 
 		vision_turn_control_50hz(&turn_ctrl_pwm);
 		speed_setup = __deliver_medicine_task_param.speed;
