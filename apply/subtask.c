@@ -232,7 +232,7 @@ void deliver_medicine_task(void)
 // ------------------------------状态：起初数字识别任务-------------------------------
 	if(flight_subtask_cnt[n] == inbegin_number_recognition_task_state)// 状态：起初数字识别任务，直到收到完成标志位才转移
 	{
-		Tidata_Tosend_Raspi(Number_recognition_inbegin_task);  // 发送起初数字识别任务给openmv
+		Tidata_Tosend_Raspi(Raspi_Ctrl_Number_Recongition_inbegin_task);  // 发送起初数字识别任务给openmv
 		if(camera1.inbegin_recognition_finsh_flag)
 		{
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
@@ -274,7 +274,7 @@ void deliver_medicine_task(void)
 		if(camera1.cross == 1)   // 如果检测到十字
 		{	
 			// camera1.cross = 0;
-			Tidata_Tosend_OpenMV(Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
+			Tidata_Tosend_OpenMV(Raspi_Ctrl_Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
 
 			flight_subtask_cnt[n] = speed0_control_until_receive_todo;
 			// flight_subtask_cnt[n] = speed0_control;
