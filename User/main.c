@@ -38,9 +38,9 @@ int main()
 	NTimer_Init();
 	
 	page_number = 6;
-	// sdk_work_mode = Deliver_Medicine;
+	sdk_work_mode = Deliver_Medicine;
 	// sdk_work_mode = Car_Stop;
-	sdk_work_mode = 99;
+	// sdk_work_mode = 99;
 	// Tidata_Tosend_OpenMV(Tracking_task);
 	while(1)
 	{

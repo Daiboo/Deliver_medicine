@@ -21,7 +21,7 @@ typedef enum
 
 #define deliver_medicine_car_speed_default 30.0f
 #define start_point_precision_cm 0.5f
-#define fix_rotate_point_default 10.0f
+#define fix_rotate_point_default 30.0f
 #define start_point_fit_times   20//连续n次满足位置偏差很小,即认为位置控制完成
 #define distance_precision_cm 1.0f
 #define target_point_fit_times   10

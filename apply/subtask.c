@@ -225,6 +225,9 @@ typedef enum
 	
 }Task_state;  // 状态机阶段
 
+
+
+
 // -----------------------------------------送药任务状态机---------------------------------
 void deliver_medicine_task(void)
 {
@@ -236,11 +239,11 @@ void deliver_medicine_task(void)
 	if(flight_subtask_cnt[n] == inbegin_number_recognition_task_state)// 状态：起初数字识别任务，直到收到完成标志位才转移
 	{
 		Tidata_Tosend_Raspi(Raspi_Ctrl_Number_Recongition_inbegin_task);  // 发送起初数字识别任务给openmv
-		flight_subtask_cnt[n] = tracking_distance_ctrl;
+		// flight_subtask_cnt[n] = tracking_distance_ctrl;
 		if(camera1.inbegin_recognition_finsh_flag)
 		{
 
-			flight_subtask_cnt[n] = tracking_distance_ctrl;   // 下一状态：循迹&距离控制
+			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;   // 下一状态：循迹&距离控制
 			// flight_subtask_cnt[n] = speed0_control;
 			// flight_subtask_cnt[n] = clockwise_rotate_90_task_state;  // 下一状态：右转90度
 			Tidata_Tosend_OpenMV(Tracking_task);  // 发送循迹任务给openmv
@@ -277,7 +280,8 @@ void deliver_medicine_task(void)
 		else 
 		{
 			flight_global_cnt[n]=0;
-			flight_subtask_cnt[n] = speed0_control;  // 下一阶段任务：
+			
+			flight_subtask_cnt[n] = speed0_control_until_receive_todo;  // 下一阶段任务：
 		}
 	}
 
@@ -300,7 +304,7 @@ void deliver_medicine_task(void)
 // ------------------------------- 状态：循迹控制，直到识别到十字或停止位--------------------------------------
 	else if(flight_subtask_cnt[n] == tracking_control_until_recognition_cross_or_stop) // 状态：循迹控制 直到识别到十字
 	{
-
+		Tidata_Tosend_Raspi(Raspi_Cross_Recongition_task);
 		speed_ctrl_mode=1;  //速度控制方式为两轮单独控制
 		vision_turn_control_50hz(&turn_ctrl_pwm);
 		speed_setup = __deliver_medicine_task_param.speed;
@@ -313,56 +317,71 @@ void deliver_medicine_task(void)
 		if(camera1.cross == 1)   // 如果检测到十字
 		{	
 			// camera1.cross = 0;
-			Tidata_Tosend_OpenMV(Raspi_Ctrl_Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
+			Tidata_Tosend_Raspi(Raspi_Ctrl_Number_recognition_intrack_task);		// 发送赛道数字识别任务给openmv
 
 			flight_subtask_cnt[n] = speed0_control_until_receive_todo;
+			execute_time_ms[n] = 10 / flight_subtask_delta;   // 下一个任务执行时间加上10ms
 			// flight_subtask_cnt[n] = speed0_control;
 		}
 		else 		// 如果检测到停止位
 		{
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
+			
 		}
 	}
 // -----------------------状态：零速度控制，直到收到前左右转指令-------------------
 	else if(flight_subtask_cnt[n] == speed0_control_until_receive_todo) // 状态：零速度控制，直到收到前进，左转，右转指令
 	{
+		Tidata_Tosend_Raspi(Raspi_Ctrl_Number_recognition_intrack_task);
 		// 零速度控制
 		speed_ctrl_mode=1; 
 		speed_expect[0] = 0;	//左边轮子速度期望
 		speed_expect[1] = 0;	//右边轮子速度期望
 		speed_control_100hz(speed_ctrl_mode);
+		if(execute_time_ms[n] > 0) 
+		{
+			execute_time_ms[n]--;
+			return;
+		}
+
+		
 
 		if(camera1.intrack_todo_task != 7)
 			camera1.cross = 0;  // 复位
 		if(camera1.intrack_todo_task == 4)   // 100 左转 
 		{	
 			
-			beep.period = 200;
-			beep.light_on_percent = 0.5f;
-			beep.reset = 1;
-			beep.times = 3;
+			// beep.period = 200;
+			// beep.light_on_percent = 0.5f;
+			// beep.reset = 1;
+			// beep.times = 3;
 
 			flight_subtask_cnt[n] = contrarotate_90_task_state;  // 下一状态：左转90度
 			// flight_subtask_cnt[n] = speed0_control;
+			camera1.intrack_todo_task = 0;
 		}
 		else if(camera1.intrack_todo_task == 2)  // 010 直走  
 		{
 			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop; // 下一状态；循迹控制直到识别十字
-			
+			camera1.intrack_todo_task = 0;
+
 			beep.period = 200;
 			beep.light_on_percent = 0.5f;
 			beep.reset = 1;
-			beep.times = 3;
+			beep.times = 1;
+			camera1.intrack_todo_task = 0;
+
 
 		}
 		else if(camera1.intrack_todo_task == 1)  // 001 右转
 		{
 			flight_subtask_cnt[n] = clockwise_rotate_90_task_state;  // 下一状态：右转90度
+			camera1.intrack_todo_task = 0;
 
-			beep.period = 200;
-			beep.light_on_percent = 0.5f;
-			beep.reset = 1;
-			beep.times = 3;
+			// beep.period = 200;
+			// beep.light_on_percent = 0.5f;
+			// beep.reset = 1;
+			// beep.times = 3;
 		}
 		// else
 		// {

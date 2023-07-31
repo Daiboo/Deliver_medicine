@@ -16,6 +16,8 @@ typedef enum
     Raspi_Ctrl_Send_Instruction_toRaspi,    // ti板发送控制任务给树莓派
     Raspi_Ctrl_Number_Recongition_inbegin_task,     // 树莓派起初数字识别任务
     Raspi_Ctrl_Number_recognition_intrack_task,     // 树莓派赛道数字识别任务
+    Raspi_Cross_Recongition_task,                 // 树莓派摄像头路口检测任务
+
     
 }Raspi_Ctrl_Instruction_Type;
 

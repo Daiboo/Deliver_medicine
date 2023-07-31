@@ -271,6 +271,11 @@ void Raspi_Data_Phrase_Process_Lite(uint8_t *data_buf, uint8_t num) // 树莓派
         }
     }
     break;
+    case Raspi_Cross_Recongition_task:
+    {
+        camera1.cross = *(data_buf + 4);
+    }
+    break;
     default:
     {
         for (uint8_t i = 0; i < Instruction_Number_Max; i++)
