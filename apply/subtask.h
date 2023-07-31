@@ -25,12 +25,14 @@ typedef enum
 #define start_point_fit_times   20//连续n次满足位置偏差很小,即认为位置控制完成
 #define distance_precision_cm 1.0f
 #define target_point_fit_times   10
+#define tracking_distance_forward_default 40.0f
 
 
 typedef struct 
 {
 	float speed;			// 任务中小车的速度
 	float fix_rotate_point;  // 任务中距离点修正
+	float tracking_distance_forward;  // 任务中循迹同时距离控制前进的距离
 }Deliver_medicine_task_param;
 
 

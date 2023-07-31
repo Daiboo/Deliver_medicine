@@ -204,16 +204,18 @@ void distance_control_task(float distance)
 Deliver_medicine_task_param __deliver_medicine_task_param = {
 	.speed = deliver_medicine_car_speed_default,
 	.fix_rotate_point = fix_rotate_point_default,
-	
+	.tracking_distance_forward = tracking_distance_forward_default,
 };
 
 
 typedef enum
 {
 	inbegin_number_recognition_task_state = 0,  // 状态：起初数字识别任务
-	tracking_control_until_recognition_cross_or_stop = 1,  // 状态：循迹控制，直到识别到十字或停止位
-	speed0_control_until_receive_todo = 2,    // 状态：零速度控制，直到收到前左右转指令
+	tracking_control_until_recognition_cross_or_stop,  // 状态：循迹控制，直到识别到十字或停止位
 
+	speed0_control_until_receive_todo,    // 状态：零速度控制，直到收到前左右转指令
+
+	tracking_distance_ctrl = 25,					// 循迹加上距离控制到达基准点
 	speed0_control = 50,   		// 0速度控制
 	
 	clockwise_rotate_90_task_state = 100,  // 左转状态机
@@ -234,15 +236,48 @@ void deliver_medicine_task(void)
 	if(flight_subtask_cnt[n] == inbegin_number_recognition_task_state)// 状态：起初数字识别任务，直到收到完成标志位才转移
 	{
 		Tidata_Tosend_Raspi(Raspi_Ctrl_Number_Recongition_inbegin_task);  // 发送起初数字识别任务给openmv
-
+		flight_subtask_cnt[n] = tracking_distance_ctrl;
 		if(camera1.inbegin_recognition_finsh_flag)
 		{
 
-			flight_subtask_cnt[n] = tracking_control_until_recognition_cross_or_stop;
+			flight_subtask_cnt[n] = tracking_distance_ctrl;   // 下一状态：循迹&距离控制
 			// flight_subtask_cnt[n] = speed0_control;
 			// flight_subtask_cnt[n] = clockwise_rotate_90_task_state;  // 下一状态：右转90度
 			Tidata_Tosend_OpenMV(Tracking_task);  // 发送循迹任务给openmv
 			camera1.inbegin_recognition_finsh_flag = 0;
+		}
+	}
+
+	else if(flight_subtask_cnt[n] == tracking_distance_ctrl)	// 循迹&距离控制
+	{
+		distance_ctrl.expect=smartcar_imu.state_estimation.distance 
+		+ __deliver_medicine_task_param.tracking_distance_forward;  		// 修正转向基准点
+		flight_subtask_cnt[n]++;
+
+	}
+	else if(flight_subtask_cnt[n] == tracking_distance_ctrl + 1)
+	{
+		distance_control();
+		=distance_cspeed_setuptrl.output;
+
+		vision_turn_control_50hz(&turn_ctrl_pwm);
+		speed_setup = __deliver_medicine_task_param.speed;
+		speed_expect[0] = speed_setup+turn_ctrl_pwm*turn_scale;//左边轮子速度期望
+		speed_expect[1] = speed_setup-turn_ctrl_pwm*turn_scale;//右边轮子速度期望
+		//速度控制
+		speed_control_100hz(speed_ctrl_mode);
+
+		
+		// 判断距离
+		if(flight_global_cnt[n] < target_point_fit_times)//连续N次满足位置偏差很小,即认为位置控制完成
+		{
+			if(ABS(distance_ctrl.error) < distance_precision_cm)flight_global_cnt[n]++;	
+			else flight_global_cnt[n]/=2;		
+		}
+		else 
+		{
+			flight_global_cnt[n]=0;
+			flight_subtask_cnt[n] = speed0_control;  // 下一阶段任务：
 		}
 	}
 
