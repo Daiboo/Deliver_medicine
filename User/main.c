@@ -37,14 +37,14 @@ int main()
 	Button_Init();					//板载按键初始化
 	NTimer_Init();
 	
-	page_number = 8;
-	sdk_work_mode = Deliver_Medicine;
+	page_number = 6;
+	// sdk_work_mode = Deliver_Medicine;
 	// sdk_work_mode = Car_Stop;
-	Tidata_Tosend_OpenMV(Tracking_task);
+	sdk_work_mode = 99;
+	// Tidata_Tosend_OpenMV(Tracking_task);
 	while(1)
 	{
 		screen_display();//屏幕显示
-		
 		
 	}
 }
@@ -61,7 +61,7 @@ int main()
 void duty_200hz(void)    // 每5ms执行一次
 {
 	get_wheel_speed();					   //获取轮胎转速
-	Raspi_Ctrl_Instruction_Dispatch();
+	// Raspi_Ctrl_Instruction_Dispatch();
 	sdk_duty_run();					  		 //SDK总任务控制，调参
 	nmotor_output(speed_ctrl_mode);          //控制器输出，主要是输出pwm的
 	// rangefinder_statemachine();		 //超声波传感器数据获取
